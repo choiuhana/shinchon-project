@@ -7,6 +7,7 @@ node_modules/
 # Next.js / Build
 .next/
 **/.next/
+/build
 out/
 dist/
 .turbo/
@@ -38,3 +39,8 @@ coverage/
 
 # Prisma
 prisma/migrations/
+
+# Misc / Framework artifacts
+.vercel
+*.tsbuildinfo
+next-env.d.ts
