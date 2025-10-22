@@ -21,25 +21,39 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
+import {
+	CalendarDays,
+	MapPin,
+	Sparkles,
+} from "lucide-react";
 
 const quickInfo = [
 	{
 		title: "입학 상담",
-		description: "온라인으로 손쉽게 상담 예약을 남기고, 담당 교사가 24시간 이내에 연락드립니다.",
+		description:
+			"온라인으로 손쉽게 신청하면 상담 선생님이 24시간 이내에 연락드립니다.",
 		action: "상담 예약하기",
 		href: "#admission-consult",
+		icon: Sparkles,
+		iconBg: "bg-sky-100",
 	},
 	{
 		title: "캠퍼스 투어",
-		description: "교실·실외놀이 공간을 직접 둘러볼 수 있는 30분 투어를 평일 오후에 운영합니다.",
+		description:
+			"실내외 교실과 놀이 공간을 직접 둘러보는 30분 투어 프로그램을 운영합니다.",
 		action: "투어 신청",
 		href: "#campus-tour",
+		icon: MapPin,
+		iconBg: "bg-rose-100",
 	},
 	{
 		title: "교육 프로그램",
-		description: "몬테소리 · 자연생태 · 창의예술 융합 수업으로 아이의 잠재력을 키워요.",
+		description:
+			"몬테소리 · 생태 체험 · 이중언어 수업이 하루 속에서 자연스럽게 이어집니다.",
 		action: "프로그램 보기",
 		href: "#programs",
+		icon: CalendarDays,
+		iconBg: "bg-amber-100",
 	},
 ];
 
@@ -88,24 +102,35 @@ const noticeRows = [
 export default function StyleguidePage() {
 	return (
 		<div className="space-y-20 pb-24">
-			<section className="rounded-[48px] bg-gradient-to-r from-sky-100 via-amber-100 to-rose-100 px-12 py-16 shadow-sm">
-				<div className="flex flex-col gap-6 text-slate-900">
-					<Badge className="w-fit bg-white/80 px-3 py-1 text-sm font-medium text-sky-700">
-						아이의 하루가 반짝이는 곳
+			<section className="relative overflow-hidden rounded-[56px] border border-sky-100 bg-gradient-to-br from-sky-50 via-rose-50 to-amber-50 px-10 py-16 shadow-[0_24px_60px_-40px_rgba(15,23,42,0.6)]">
+				<div className="absolute -left-20 top-6 h-56 w-56 rounded-full bg-sky-200/35 blur-3xl" />
+				<div className="absolute -right-16 bottom-8 h-64 w-64 rounded-full bg-rose-200/35 blur-3xl" />
+				<div className="absolute right-14 top-10 hidden h-24 w-24 rounded-full bg-amber-200/60 md:block" />
+				<div className="relative z-10 flex flex-col gap-6 text-slate-900">
+					<Badge className="w-fit rounded-full bg-white/90 px-4 py-2 text-xs font-semibold uppercase tracking-wide text-sky-600 shadow-sm">
+						Lovely &amp; Bright Campus
 					</Badge>
-					<h1 className="text-balance text-4xl font-bold leading-tight md:text-5xl">
-						신촌몬테소리유치원과 함께 성장하는
-						<br className="hidden md:block" /> 아이의 상상력과 배움
+					<h1 className="font-heading text-balance text-4xl font-semibold leading-tight text-slate-900 md:text-5xl">
+						아이의 하루가 반짝이는
+						<br className="hidden md:block" /> 신촌몬테소리유치원
 					</h1>
-					<p className="max-w-2xl text-lg text-slate-700">
-						아이 한 명 한 명의 호기심을 지켜주기 위해 생활·놀이·프로젝트가 자연스럽게 연결된
-						몬테소리·생태·이중언어 융합 커리큘럼을 운영합니다.
+					<p className="max-w-2xl text-lg text-slate-600 md:text-xl">
+						놀이와 프로젝트가 자연스럽게 이어지는 몬테소리 · 생태 체험 · 이중언어 커리큘럼으로
+						아이의 호기심과 창의력을 키워요.
 					</p>
 					<div className="flex flex-wrap gap-3">
-						<Button size="lg" asChild>
+						<Button
+							size="lg"
+							asChild
+							className="bg-gradient-to-r from-sky-500 via-indigo-500 to-violet-500 px-8 text-lg font-semibold text-white shadow-lg shadow-sky-500/30"
+						>
 							<Link href="#admission-consult">입학 상담 신청</Link>
 						</Button>
-						<Button variant="secondary" size="lg" className="bg-white/80 text-slate-900 hover:bg-white">
+						<Button
+							variant="secondary"
+							size="lg"
+							className="border border-white/80 bg-white/75 px-8 text-lg text-slate-900 shadow-sm hover:bg-white"
+						>
 							<Link href="#campus-tour">캠퍼스 투어 예약</Link>
 						</Button>
 					</div>
@@ -114,18 +139,31 @@ export default function StyleguidePage() {
 
 			<section className="space-y-8" id="quick-links">
 				<header className="max-w-2xl space-y-3">
-					<h2 className="text-3xl font-semibold text-slate-900">한눈에 보는 핵심 정보</h2>
-					<p className="text-slate-600">
+					<h2 className="font-heading text-3xl font-semibold text-slate-900 md:text-4xl">
+						한눈에 보는 핵심 서비스
+					</h2>
+					<p className="text-slate-600 md:text-lg">
 						가장 많이 찾는 정보와 서비스 흐름을 카드형으로 배치해 모바일에서도 빠르게 접근할
 						수 있도록 구성합니다.
 					</p>
 				</header>
 				<div className="grid gap-6 md:grid-cols-3">
 					{quickInfo.map((item) => (
-						<Card key={item.title} className="h-full border-none bg-white shadow-[0_14px_40px_-28px_rgba(15,23,42,0.45)]">
-							<CardHeader className="space-y-2">
-								<CardTitle className="text-xl text-slate-900">{item.title}</CardTitle>
-								<CardDescription className="text-slate-600">{item.description}</CardDescription>
+						<Card
+							key={item.title}
+							className="relative h-full overflow-hidden border-none bg-white/85 shadow-[0_20px_45px_-30px_rgba(15,23,42,0.65)] backdrop-blur-sm transition hover:-translate-y-1 hover:shadow-[0_28px_60px_-30px_rgba(37,99,235,0.35)]"
+						>
+							<div className="absolute -right-10 -top-10 h-36 w-36 rounded-full bg-sky-200/30 blur-2xl" />
+							<CardHeader className="space-y-4">
+								<div className={`flex h-16 w-16 items-center justify-center rounded-2xl ${item.iconBg}`}>
+									<item.icon className="h-8 w-8 text-slate-700" />
+								</div>
+								<CardTitle className="font-heading text-2xl text-slate-900">
+									{item.title}
+								</CardTitle>
+								<CardDescription className="text-base leading-relaxed text-slate-600">
+									{item.description}
+								</CardDescription>
 							</CardHeader>
 							<CardContent>
 								<Button variant="link" asChild className="px-0 text-sky-600">
@@ -139,19 +177,24 @@ export default function StyleguidePage() {
 
 			<section className="space-y-8" id="programs">
 				<header className="max-w-2xl space-y-3">
-					<h2 className="text-3xl font-semibold text-slate-900">교육 프로그램 미리보기</h2>
-					<p className="text-slate-600">
+					<h2 className="font-heading text-3xl font-semibold text-slate-900 md:text-4xl">
+						교육 프로그램 미리보기
+					</h2>
+					<p className="text-slate-600 md:text-lg">
 						Tabs 컴포넌트를 활용해 핵심 커리큘럼을 탐색할 수 있는 인터랙션을 제공합니다. 각 탭의
 						내용은 상세 페이지와 연동됩니다.
 					</p>
 				</header>
-				<Tabs defaultValue={programTabs[0]?.value} className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-					<TabsList className="grid w-full grid-cols-1 gap-2 bg-transparent text-base md:grid-cols-3">
+				<Tabs
+					defaultValue={programTabs[0]?.value}
+					className="rounded-[36px] border border-slate-200 bg-white/90 p-8 shadow-[0_24px_60px_-45px_rgba(15,23,42,0.6)]"
+				>
+					<TabsList className="grid w-full grid-cols-1 gap-3 bg-transparent text-base md:grid-cols-3">
 						{programTabs.map((tab) => (
 							<TabsTrigger
 								key={tab.value}
 								value={tab.value}
-								className="rounded-full border border-transparent bg-slate-100 px-6 py-3 text-slate-700 data-[state=active]:border-sky-200 data-[state=active]:bg-sky-50 data-[state=active]:font-semibold data-[state=active]:text-sky-700"
+								className="rounded-full border border-transparent bg-slate-100/70 px-6 py-3 text-slate-600 transition data-[state=active]:border-sky-200 data-[state=active]:bg-gradient-to-r data-[state=active]:from-sky-100 data-[state=active]:to-sky-50 data-[state=active]:font-semibold data-[state=active]:text-sky-700"
 							>
 								{tab.label}
 							</TabsTrigger>
@@ -159,9 +202,11 @@ export default function StyleguidePage() {
 					</TabsList>
 					{programTabs.map((tab) => (
 						<TabsContent key={tab.value} value={tab.value} className="space-y-4 bg-white">
-							<Card className="border-none bg-sky-50/60">
+							<Card className="border-none bg-sky-50/70">
 								<CardHeader>
-									<CardTitle className="text-2xl font-semibold text-slate-900">{tab.label} 프로그램</CardTitle>
+									<CardTitle className="font-heading text-2xl font-semibold text-slate-900">
+										{tab.label} 프로그램
+									</CardTitle>
 									<CardDescription className="text-slate-700">{tab.summary}</CardDescription>
 								</CardHeader>
 								<CardContent>
@@ -182,13 +227,15 @@ export default function StyleguidePage() {
 
 			<section className="space-y-8" id="notice-preview">
 				<header className="max-w-2xl space-y-3">
-					<h2 className="text-3xl font-semibold text-slate-900">알림마당 미리보기</h2>
-					<p className="text-slate-600">
+					<h2 className="font-heading text-3xl font-semibold text-slate-900 md:text-4xl">
+						알림마당 미리보기
+					</h2>
+					<p className="text-slate-600 md:text-lg">
 						Table 컴포넌트는 공지·가정통신문·행사 등 게시판 목록에 사용됩니다. 상태 배지는 카테고리
 						컬러로 구분하여 가독성을 높입니다.
 					</p>
 				</header>
-				<Table>
+				<Table className="overflow-hidden rounded-3xl border border-slate-100 bg-white shadow-[0_18px_48px_-36px_rgba(15,23,42,0.55)]">
 					<TableCaption>최근 등록된 알림</TableCaption>
 					<TableHeader>
 						<TableRow>
@@ -200,9 +247,14 @@ export default function StyleguidePage() {
 					<TableBody>
 						{noticeRows.map((row) => (
 							<TableRow key={row.title}>
-								<TableCell className="font-medium text-slate-800">{row.title}</TableCell>
+								<TableCell className="font-medium text-slate-800">
+									{row.title}
+								</TableCell>
 								<TableCell>
-									<Badge variant="secondary" className="bg-sky-100 text-sky-700">
+									<Badge
+										variant="secondary"
+										className="rounded-full bg-sky-100 px-3 py-1 text-sky-700"
+									>
 										{row.category}
 									</Badge>
 								</TableCell>
@@ -215,16 +267,20 @@ export default function StyleguidePage() {
 
 			<section className="space-y-8" id="admission-consult">
 				<header className="max-w-2xl space-y-3">
-					<h2 className="text-3xl font-semibold text-slate-900">입학 상담 폼 예시</h2>
-					<p className="text-slate-600">
+					<h2 className="font-heading text-3xl font-semibold text-slate-900 md:text-4xl">
+						입학 상담 폼 예시
+					</h2>
+					<p className="text-slate-600 md:text-lg">
 						shadcn 폼 컴포넌트를 조합해 상담 신청 섹션을 구성합니다. 실제 구현 시에는 필수값 검증,
 						전송 성공 메시지를 연결합니다.
 					</p>
 				</header>
-				<Card className="border-none bg-white shadow-sm">
+				<Card className="border-none bg-gradient-to-br from-white via-sky-50/60 to-rose-50/60 shadow-[0_22px_55px_-40px_rgba(37,99,235,0.45)] backdrop-blur">
 					<CardHeader>
-						<CardTitle className="text-xl font-semibold text-slate-900">바로 상담 신청하기</CardTitle>
-						<CardDescription className="text-slate-600">
+						<CardTitle className="font-heading text-2xl font-semibold text-slate-900">
+							바로 상담 신청하기
+						</CardTitle>
+						<CardDescription className="text-base text-slate-600">
 							연락 가능한 시간을 남겨주시면 24시간 이내로 담당 교사가 연락드립니다.
 						</CardDescription>
 					</CardHeader>
@@ -252,14 +308,19 @@ export default function StyleguidePage() {
 							<Textarea
 								id="message"
 								rows={4}
-								placeholder="궁금하신 내용을 자유롭게 남겨주세요. (예: 입학 상담 가능 일정, 프로그램 문의 등)"
+								placeholder="궁금하신 내용을 자유롭게 남겨주세요. (예: 입학 가능 일정, 프로그램 문의 등)"
 							/>
 						</div>
 						<div className="flex flex-wrap items-center justify-between gap-4">
 							<p className="text-sm text-slate-500">
 								상담 신청 시 개인정보 처리방침에 동의한 것으로 간주됩니다.
 							</p>
-							<Button size="lg">상담 신청 보내기</Button>
+							<Button
+								size="lg"
+								className="bg-gradient-to-r from-emerald-400 via-sky-400 to-indigo-500 px-8 font-semibold text-white shadow-lg shadow-sky-400/30"
+							>
+								상담 신청 보내기
+							</Button>
 						</div>
 					</CardContent>
 				</Card>

@@ -81,4 +81,4 @@
 - 2025-10-23 — Added Prettier configuration (`.prettierrc`) with shared formatting rules (tabs, width 120, trailing commas, etc.).
 - 2025-10-23 — Scaffolded Next.js project at repo root (TypeScript, Tailwind, ESLint, npm) and verified with `npm run lint`.
 - 2025-10-23 — Initialized shadcn/ui CLI, added core components (button, card, badge, tabs, table, input, textarea, label), created `/styleguide` preview page, and restructured project to live at root for simpler layout.
-- 2025-10-23 — Applied kindergarten-friendly pastel theme tokens in `globals.css` for shadcn/ui and verified via `/styleguide`.
+- 2025-10-23 — Applied kindergarten-friendly pastel theme tokens in `globals.css`, switched to Fredoka + Noto Sans KR fonts, and refreshed `/styleguide` to mirror Petit 레퍼런스 무드.
