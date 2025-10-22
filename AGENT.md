@@ -49,6 +49,7 @@
 - `신촌몬테소리유치원_사이트맵_및_페이지구조.md` — structural layout and per-page expectations.
 - `신촌몬테소리유치원_기능_명세서.md` — functional specs plus API/data models.
 - `web/` — Next.js(App Router) baseline scaffolded via `create-next-app` with TypeScript, Tailwind, ESLint, and npm tooling.
+- `web/src/app/styleguide/page.tsx` — shadcn/ui 기반 컴포넌트 프리뷰 페이지 (Hero, 카드, 탭, 테이블, 폼 샘플).
 - `AGENT.md` (this file) — coordination reference and change log root.
 
 ## Workflow for Agents
@@ -67,10 +68,10 @@
    - When introducing new tooling or architectural shifts, document rationale in both the relevant spec and the History Log.
 
 ## Immediate Next Steps (Suggested)
-- Install shadcn/ui CLI within `web/`, establish base tokens (colors, typography) and generate core primitives.
-- Create `/styleguide` route to preview Hero/cards/tabs/table/forms in Petit-inspired styling before page assembly.
+- Refine shadcn/ui 테마 변수(파스텔 팔레트, 폰트 등)와 공통 토큰 문서화.
 - Integrate tRPC + Prisma + NextAuth + Redis into the Next.js project and outline auth/role middleware.
 - Model Prisma schema for 회원/자녀/게시판/상담/알림 및 설정 테이블, including admin roles.
+- Scaffold `/admin` 레이아웃과 접근 제어 미들웨어 골격.
 - Draft migration plan for legacy content, especially parent portal data and media.
 
 ## History Log
@@ -79,3 +80,4 @@
 - 2025-10-23 — Initialized Git repository using separate `.gitdir` store (workspace is `/Users/c2/Documents/Personal/shinchon-project`) and added base project docs/configs.
 - 2025-10-23 — Added Prettier configuration (`.prettierrc`) with shared formatting rules (tabs, width 120, trailing commas, etc.).
 - 2025-10-23 — Scaffolded Next.js project in `web/` (TypeScript, Tailwind, ESLint, npm) and verified with `npm run lint`.
+- 2025-10-23 — Initialized shadcn/ui CLI, added core components (button, card, badge, tabs, table, input, textarea, label), and created `/styleguide` preview page.
