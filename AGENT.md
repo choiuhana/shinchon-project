@@ -68,7 +68,7 @@
    - When introducing new tooling or architectural shifts, document rationale in both the relevant spec and the History Log.
 
 ## Immediate Next Steps (Suggested)
-- Refine shadcn/ui 테마 변수(파스텔 팔레트, 폰트 등)와 공통 토큰 문서화.
+- Document shadcn/ui 테마 변수와 적용 원칙(브랜드 컬러, 폰트 등)을 명세에 반영.
 - Integrate tRPC + Prisma + NextAuth + Redis into the Next.js project and outline auth/role middleware.
 - Model Prisma schema for 회원/자녀/게시판/상담/알림 및 설정 테이블, including admin roles.
 - Scaffold `/admin` 레이아웃과 접근 제어 미들웨어 골격.
@@ -81,3 +81,4 @@
 - 2025-10-23 — Added Prettier configuration (`.prettierrc`) with shared formatting rules (tabs, width 120, trailing commas, etc.).
 - 2025-10-23 — Scaffolded Next.js project at repo root (TypeScript, Tailwind, ESLint, npm) and verified with `npm run lint`.
 - 2025-10-23 — Initialized shadcn/ui CLI, added core components (button, card, badge, tabs, table, input, textarea, label), created `/styleguide` preview page, and restructured project to live at root for simpler layout.
+- 2025-10-23 — Applied kindergarten-friendly pastel theme tokens in `globals.css` for shadcn/ui and verified via `/styleguide`.
