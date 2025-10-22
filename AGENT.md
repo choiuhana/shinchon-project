@@ -48,6 +48,7 @@
 - `신촌몬테소리유치원_웹사이트_개선_요구사항_명세서.md` — detailed UX, content, and tech requirements.
 - `신촌몬테소리유치원_사이트맵_및_페이지구조.md` — structural layout and per-page expectations.
 - `신촌몬테소리유치원_기능_명세서.md` — functional specs plus API/data models.
+- `web/` — Next.js(App Router) baseline scaffolded via `create-next-app` with TypeScript, Tailwind, ESLint, and npm tooling.
 - `AGENT.md` (this file) — coordination reference and change log root.
 
 ## Workflow for Agents
@@ -66,9 +67,9 @@
    - When introducing new tooling or architectural shifts, document rationale in both the relevant spec and the History Log.
 
 ## Immediate Next Steps (Suggested)
-- Initialize repository with Next.js(App Router) + tRPC + Prisma + PostgreSQL + Redis + NextAuth baseline.
-- Define shadcn/ui theming tokens (colors, typography) and document usage guidelines.
-- Map core public/admin pages to shadcn components (nav, hero, cards, tabs, data tables, forms).
+- Install shadcn/ui CLI within `web/`, establish base tokens (colors, typography) and generate core primitives.
+- Create `/styleguide` route to preview Hero/cards/tabs/table/forms in Petit-inspired styling before page assembly.
+- Integrate tRPC + Prisma + NextAuth + Redis into the Next.js project and outline auth/role middleware.
 - Model Prisma schema for 회원/자녀/게시판/상담/알림 및 설정 테이블, including admin roles.
 - Draft migration plan for legacy content, especially parent portal data and media.
 
@@ -77,3 +78,4 @@
 - 2025-10-23 — Finalized TypeScript full-stack choice (Next.js + tRPC + Prisma + PostgreSQL + Redis + NextAuth) and confirmed admin workspace is part of initial build scope.
 - 2025-10-23 — Initialized Git repository using separate `.gitdir` store (workspace is `/Users/c2/Documents/Personal/shinchon-project`) and added base project docs/configs.
 - 2025-10-23 — Added Prettier configuration (`.prettierrc`) with shared formatting rules (tabs, width 120, trailing commas, etc.).
+- 2025-10-23 — Scaffolded Next.js project in `web/` (TypeScript, Tailwind, ESLint, npm) and verified with `npm run lint`.
