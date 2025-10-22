@@ -75,3 +75,4 @@
 ## History Log
 - 2025-10-22 — Initial AGENT.md created from v1.0 specification set; established shadcn/ui as mandatory UI layer and recorded legacy remediation items.
 - 2025-10-23 — Finalized TypeScript full-stack choice (Next.js + tRPC + Prisma + PostgreSQL + Redis + NextAuth) and confirmed admin workspace is part of initial build scope.
+- 2025-10-23 — Initialized Git repository using separate `.gitdir` store (workspace is `/Users/c2/Documents/Personal/shinchon-project`) and added base project docs/configs.
