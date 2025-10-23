@@ -14,9 +14,12 @@ export const metadata = {
 };
 
 export default function NewsPage({ searchParams }: NewsPageProps) {
-	const selectedCategory = searchParams?.category;
+	const selectedCategory = searchParams?.category ?? "";
 	const activeCategory =
-		selectedCategory && newsCategories.find((category) => category.key === selectedCategory);
+		selectedCategory !== ""
+			? newsCategories.find((category) => category.key === selectedCategory)
+			: undefined;
+	const activeCategoryKey: NewsCategoryKey | undefined = activeCategory?.key;
 
-	return <NewsIndex activeCategoryKey={activeCategory?.key as NewsCategoryKey | undefined} />;
+	return <NewsIndex activeCategoryKey={activeCategoryKey} />;
 }
