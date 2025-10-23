@@ -103,6 +103,8 @@
 - `src/app/parents/page.tsx`, `src/app/member/login/page.tsx` — Coming Soon 플레이스홀더 페이지.
 - `src/app/member/register/page.tsx`, `src/app/member/register/actions.ts` — 회원가입 폼과 서버 액션.
 - `src/lib/auth/password.ts` — PBKDF2 기반 비밀번호 해시/검증 헬퍼.
+- `drizzle.config.ts`, `src/db/schema.ts` — Drizzle 마이그레이션 설정과 스키마 정의.
+- `drizzle/` — 생성된 마이그레이션 SQL(`0000_dear_lockjaw.sql`)과 메타(`meta/`) 파일.
 
 ## Workflow for Agents
 1. **Before Editing**
@@ -128,9 +130,10 @@
 - Draft migration plan for legacy content, especially parent portal data and media.
 - Start PWA discovery: 대상 라우트, 매니페스트 요구 아이콘, 서비스 워커 캐싱 정책, 오프라인 시나리오를 정의해 3단계 투입을 준비.
 - Connect News section to `news_posts` 테이블 기반의 read API, 상세 페이지 SEO 메타 구조 확정.
-- Implement NextAuth 골격과 부모 포털 접근 가드, 플레이스홀더를 인증 흐름과 연동.
-- Model `news_posts`/`news_attachments` 테이블을 포함한 Vercel Postgres 마이그레이션을 작성하고, Admin CRUD Server Action 설계.
-- 설계된 Admin UI(News 관리, 승인 관리 등)에 맞춰 `/admin` 레이아웃 및 네비게이션, 권한 가드를 구체화.
+- Implement NextAuth 골격과 실제 로그인 흐름(`/member/login` UI 교체 포함), 승인/역할 가드를 부모 포털과 Admin에 연동.
+- Model `news_posts`/`news_attachments` 등 주요 테이블을 Drizzle 스키마로 확장하고 Admin CRUD Server Action 설계.
+- `/admin` 레이아웃 및 네비게이션, News/승인 관리 UI를 scaffolding하고 Server Action과 연결.
+- Drizzle 마이그레이션을 CI/배포 흐름에 포함시키고 `npm run db:generate`/`npm run db:push` 운용 절차를 문서화.
 
 ## History Log
 - 2025-10-22 — Initial AGENT.md created from v1.0 specification set; established shadcn/ui as mandatory UI layer and recorded legacy remediation items.
@@ -146,3 +149,4 @@
 - 2025-10-25 — 공개 홈페이지 헤더/푸터를 공용 컴포넌트화하고 홈 섹션을 명세 기반으로 스캐폴딩, 알림마당/학부모 포털/로그인 플레이스홀더 라우트를 추가.
 - 2025-10-25 — 내부 Admin에서 News/공지 콘텐츠를 관리하는 전략과 NextAuth 승인 흐름 설계안을 작성하고 AGENT 가이드에 반영.
 - 2025-10-25 — 회원가입 폼과 서버 액션을 추가하고 PBKDF2 기반 비밀번호 해시 헬퍼를 도입.
+- 2025-10-25 — Drizzle ORM 기반 마이그레이션 체계를 도입하고 `schema.ts`, `drizzle.config.ts`, 마이그레이션 SQL을 추가.
