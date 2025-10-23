@@ -14,9 +14,9 @@ export type RegisterFormState = {
 };
 
 export async function registerAction(
-	prevState: RegisterFormState | undefined,
+	prevState: RegisterFormState,
 	formData: FormData,
-): Promise<RegisterFormState | void> {
+): Promise<RegisterFormState> {
 	const email = String(formData.get("email") ?? "").trim().toLowerCase();
 	const password = String(formData.get("password") ?? "");
 	const confirmPassword = String(formData.get("confirmPassword") ?? "");
@@ -49,7 +49,11 @@ export async function registerAction(
 		`;
 
 		if (existing.rowCount && existing.rows.length > 0) {
-			return { errors: { email: "이미 가입된 이메일입니다." } };
+			return {
+				errors: {
+					email: "이미 가입된 이메일입니다.",
+				},
+			};
 		}
 
 		const passwordHash = hashPassword(password);
@@ -67,4 +71,5 @@ export async function registerAction(
 	}
 
 	redirect("/member/login?registered=1");
+	return prevState;
 }
