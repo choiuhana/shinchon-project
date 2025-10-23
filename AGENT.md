@@ -10,6 +10,7 @@
 - **Primary sections** (public): 유치원 소개, 교육 프로그램, 입학 안내, 알림마당 (`신촌몬테소리유치원_사이트맵_및_페이지구조.md:5-110`).
 - **Secure parent portal**: 반 소식, 학사 일정, 서식 자료실, 1:1 문의, 운영위원회, 회원정보 관리 (`신촌몬테소리유치원_사이트맵_및_페이지구조.md:1145-1178`).
 - **Administrator goals**: Streamlined CMS, analytics, automated backups, and compliant document management (`신촌몬테소리유치원_개선안_요약본.md:99-109`, `신촌몬테소리유치원_웹사이트_개선_요구사항_명세서.md:234-244`).
+- **Phase 3 enhancement**: Optional PWA 패키징으로 설치형 경험과 오프라인 대응을 제공 (`신촌몬테소리유치원_웹사이트_개선_요구사항_명세서.md:1090-1103`).
 
 ## Functional Scope Overview
 1. **Public Experience**
@@ -30,6 +31,49 @@
 - **Server Responsibilities**: Next.js Route Handler와 Server Action으로 회원/자녀/게시판/상담/파일 업로드/알림 흐름을 구성하고 `@vercel/postgres`를 통해 영속 데이터를 관리합니다 (`신촌몬테소리유치원_기능_명세서.md:27-74`, `252-320`).
 - **Integrations**: SMS 인증, 이메일 발송, 지도 API, Google Analytics/Hotjar 등을 모듈화하여 적용합니다 (`신촌몬테소리유치원_웹사이트_개선_요구사항_명세서.md:1207-1249`).
 - **Testing & Compliance**: 접근성·성능·보안·반응형·브라우저 호환 테스트를 출시 필수 조건으로 유지합니다 (`신촌몬테소리유치원_웹사이트_개선_요구사항_명세서.md:1200-1250`).
+
+## PWA Strategy (Phase 3)
+- 3단계 고도화(1개월) 일정에 선택 과업으로 PWA 배포를 포함해 핵심 포털 기능이 안정화된 뒤 설치형 경험을 제공 (`신촌몬테소리유치원_웹사이트_개선_요구사항_명세서.md:1090-1103`).
+- 기본 범위: 웹 앱 매니페스트·아이콘 세트 제작, 서비스 워커 기반 오프라인 셸, 마케팅·부모 포털 읽기 페이지 캐싱, 오프라인 안내 화면 준비.
+- 구현 방안: Next.js에 `@ducanh2912/next-pwa` 등 PWA 번들러를 통합해 프리캐시 자산, API 런타임 캐싱 정책, 버전 업데이트 알림, 설치 프로모션을 구성.
+- 확장 옵션: Stage 3 알림 기능과 연계한 웹 푸시, 상담/문의 폼 오프라인 전송 큐, PWA 설치/제거 이벤트 분석 반영, 홈 화면 배경 이미지 가이드.
+- 선행 조건: 브랜드 아이콘 패키지 확정, 저장소/보안 정책 검토, 접근성·성능 예산 재확인, 부모 포털 인증 흐름과 서비스 워커 캐싱 범위 정렬.
+
+## News Content & Admin Strategy
+- **운영 원칙**: 공지·가정통신문·행사 등 알림 콘텐츠는 외부 CMS 없이 Next.js 기반 내부 Admin 대시보드에서 직접 작성·관리합니다.
+- **데이터 스키마 초안** (Vercel Postgres 기준, Drizzle/Prisma 마이그레이션 예정):
+  - `news_posts`(id, title, slug, category, summary, content, hero_image_url, hero_image_alt, publish_at, is_highlighted, audience_scope, created_by, updated_at).
+  - `news_attachments`(id, post_id FK, file_url, label) — 필요 시 확장.
+- **Admin UI 요구사항**:
+  - `/admin/news` 목록/검색/필터(카테고리, 게시 상태), `/admin/news/new` 작성 에디터(Rich Text + 이미지 업로드), `/admin/news/[id]/edit`.
+  - 게시/수정 시 홈 프리뷰 및 `/news` 캐시 무효화(`revalidateTag("news")`).
+  - `audience_scope` 설정으로 전 회원/승인 학부모 전용 콘텐츠 구분. 승인 전 사용자가 부모 포털용 게시글 요청 시 안내 페이지 이동.
+- **API 구조**:
+  - Server Action 또는 Route Handler(`/api/news`, `/api/news/[slug]`)가 Vercel Postgres를 직접 조회.
+  - CRUD는 Admin Server Action에서만 수행하며, Public API는 read-only. 캐싱은 ISR(`revalidate` 분단위)과 Route Handler의 `cache: 'no-store'` 조합으로 결정.
+- **향후 확장**:
+  - 게시글 저장 시 PWA 알림 큐 등록, 이미지 업로드는 Vercel Blob/S3 등으로 분리.
+  - 필요 시 Admin에서 베타용 CMS export/import 기능 제공.
+
+## Authentication & Approval Workflow
+- **기술 스택**: NextAuth.js + Vercel Postgres. `@auth/prisma-adapter` 또는 Drizzle Adapter 고려(향후 선택에 따라 DB Layer 확정).
+- **로그인 수단**:
+  - Email/Password(자체) with Email verification (magic link 대체 가능).
+  - OAuth Providers: Google, Kakao(또는 Naver) 최소 1개 이상 지원. Provider 동의 화면 문구 사전 점검.
+- **회원가입 흐름**:
+  1. 자유 가입 → 이메일 인증 완료 시 `status = "pending"` 상태로 저장.
+  2. 관리자가 `/admin`에서 승인하면 `role = "parent"` 및 `status = "active"`로 전환.
+  3. 승인 전에는 공공 페이지 및 CMS 공개 게시글만 접근 가능, 부모 포털(`parents/*`) 접근 시 안내 페이지 또는 “승인 대기” 메시지 표시.
+- **데이터 스키마 초안**:
+  - `users`(id, email, passwordHash?, name, provider, status, createdAt, updatedAt).
+  - `user_profiles`(userId FK, phone, 가족 정보 등), `user_roles` or `role` enum (parent, admin, teacher 등).
+  - `children`(id, userId FK, name, birthYear, classId 등) – 승인 후 입력 가능.
+- **접근 제어**:
+  - `middleware.ts`에서 `/parents` 및 `/admin` 라우트 보호.
+  - 부모 포털: `role=parent` + `status=active`만 접근 허용.
+  - `/admin`: `role=admin` 전용.
+  - 미승인 사용자는 `/member/pending` 안내 페이지(추후 구현)로 리다이렉트.
+- **운영 플로우**: 임시 베타 계정은 관리자가 수동 생성 → 정식 서비스 시에는 가입 후 승인을 기본으로 전환.
 
 ## Admin Scope & Kickoff Plan
 - 관리자 대시보드, 콘텐츠 관리, 통계, 자동 백업 요구사항을 초기에 함께 구현합니다 (`신촌몬테소리유치원_개선안_요약본.md:99-109`, `신촌몬테소리유치원_웹사이트_개선_요구사항_명세서.md:234-244`).
@@ -54,6 +98,9 @@
 - `src/app/api/health/route.ts` — 서버리스 헬스 엔드포인트로 DB 연결 상태를 확인.
 - `src/lib/design-tokens.ts` — Petit 테마에 맞춘 컬러·타이포·스페이싱·섀도 토큰 정의.
 - `AGENT.md` (this file) — coordination reference and change log root.
+- `src/app/news` — 알림마당 목록/카테고리/상세 페이지 스캐폴딩과 데모 데이터 연동.
+- `src/lib/data/news.ts` — 공지/가정통신문/행사 카테고리 더미 데이터 및 헬퍼.
+- `src/app/parents/page.tsx`, `src/app/member/login/page.tsx` — Coming Soon 플레이스홀더 페이지.
 
 ## Workflow for Agents
 1. **Before Editing**
@@ -77,10 +124,15 @@
 - Model Vercel DB(PostgreSQL) 스키마와 마이그레이션(회원/자녀/게시판/상담/알림 및 설정 테이블 포함) 설계를 착수.
 - Scaffold `/admin` 레이아웃과 접근 제어 미들웨어 골격.
 - Draft migration plan for legacy content, especially parent portal data and media.
+- Start PWA discovery: 대상 라우트, 매니페스트 요구 아이콘, 서비스 워커 캐싱 정책, 오프라인 시나리오를 정의해 3단계 투입을 준비.
+- Connect News section to `news_posts` 테이블 기반의 read API, 상세 페이지 SEO 메타 구조 확정.
+- Implement NextAuth 골격과 부모 포털 접근 가드, 플레이스홀더를 인증 흐름과 연동.
+- Model `news_posts`/`news_attachments` 테이블을 포함한 Vercel Postgres 마이그레이션을 작성하고, Admin CRUD Server Action 설계.
+- 설계된 Admin UI(News 관리, 승인 관리 등)에 맞춰 `/admin` 레이아웃 및 네비게이션, 권한 가드를 구체화.
 
 ## History Log
 - 2025-10-22 — Initial AGENT.md created from v1.0 specification set; established shadcn/ui as mandatory UI layer and recorded legacy remediation items.
-- 2025-10-23 — Finalized TypeScript full-stack choice (Next.js + tRPC + Prisma + PostgreSQL + Redis + NextAuth) and confirmed admin workspace is part of initial build scope.
+- 2025-10-23 — Evaluated TypeScript 풀스택 옵션(Next.js + tRPC + Prisma + PostgreSQL + Redis + NextAuth)과 관리자 워크스페이스 초기 범위를 확정.
 - 2025-10-23 — Initialized Git repository using separate `.gitdir` store (workspace is `/Users/c2/Documents/Personal/shinchon-project`) and added base project docs/configs.
 - 2025-10-23 — Added Prettier configuration (`.prettierrc`) with shared formatting rules (tabs, width 120, trailing commas, etc.).
 - 2025-10-23 — Scaffolded Next.js project at repo root (TypeScript, Tailwind, ESLint, npm) and verified with `npm run lint`.
@@ -88,3 +140,6 @@
 - 2025-10-23 — Applied kindergarten-friendly pastel theme tokens in `globals.css`, switched to Fredoka + Noto Sans KR fonts, and refreshed `/styleguide` to mirror Petit 레퍼런스 무드.
 - 2025-10-24 — 전반적인 백엔드 전략을 Next.js 서버리스 + Vercel DB(PostgreSQL) 기반으로 전환하고 공유 DB 헬퍼(`src/lib/db.ts`) 및 `/api/health` 헬스체크 엔드포인트를 추가, AGENT 가이드를 업데이트.
 - 2025-10-24 — Downloads 아카이브의 Petit Theme 디자인 시스템을 반영해 `globals.css`, UI 컴포넌트, 랜딩 페이지, `styleguide` 전반의 토큰과 서체를 교체.
+- 2025-10-24 — Stage 3 선택 과업인 PWA 전략을 정의하고 범위·선행 조건·기술 선택을 AGENT 가이드에 기록.
+- 2025-10-25 — 공개 홈페이지 헤더/푸터를 공용 컴포넌트화하고 홈 섹션을 명세 기반으로 스캐폴딩, 알림마당/학부모 포털/로그인 플레이스홀더 라우트를 추가.
+- 2025-10-25 — 내부 Admin에서 News/공지 콘텐츠를 관리하는 전략과 NextAuth 승인 흐름 설계안을 작성하고 AGENT 가이드에 반영.

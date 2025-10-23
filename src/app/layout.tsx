@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Architects_Daughter, Kanit } from "next/font/google";
 import "./globals.css";
+import { SiteFooter } from "@/components/site/site-footer";
+import { SiteHeader } from "@/components/site/site-header";
 
 const kanit = Kanit({
 	subsets: ["latin"],
@@ -30,7 +32,11 @@ export default function RootLayout({
 	return (
 		<html lang="ko">
 			<body className={`${kanit.variable} ${architectsDaughter.variable} antialiased`}>
-				{children}
+				<div className="flex min-h-screen flex-col bg-[var(--background)] text-[var(--brand-navy)]">
+					<SiteHeader />
+					<main className="flex-1">{children}</main>
+					<SiteFooter />
+				</div>
 			</body>
 		</html>
 	);
