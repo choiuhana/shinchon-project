@@ -1,7 +1,8 @@
 "use client";
 
+import { useActionState } from "react";
 import Link from "next/link";
-import { useFormState, useFormStatus } from "react-dom";
+import { useFormStatus } from "react-dom";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -32,7 +33,7 @@ function SubmitButton() {
 }
 
 export default function RegisterPage() {
-	const [state, formAction] = useFormState(registerAction, initialState);
+	const [state, formAction] = useActionState(registerAction, initialState);
 
 	return (
 		<div className="bg-[var(--background)] text-[var(--brand-navy)]">
