@@ -1,18 +1,18 @@
 import type { Metadata } from "next";
-import { Fredoka, Noto_Sans_KR } from "next/font/google";
+import { Architects_Daughter, Kanit } from "next/font/google";
 import "./globals.css";
 
-const bodyFont = Noto_Sans_KR({
+const kanit = Kanit({
+	subsets: ["latin"],
+	weight: ["400", "500", "600", "700"],
 	variable: "--font-body",
-	subsets: ["latin", "korean"],
-	weight: ["400", "500", "700"],
 	display: "swap",
 });
 
-const headingFont = Fredoka({
-	variable: "--font-heading",
+const architectsDaughter = Architects_Daughter({
 	subsets: ["latin"],
-	weight: ["400", "500", "600", "700"],
+	weight: "400",
+	variable: "--font-accent",
 	display: "swap",
 });
 
@@ -29,9 +29,7 @@ export default function RootLayout({
 }>) {
 	return (
 		<html lang="ko">
-			<body
-				className={`${bodyFont.variable} ${headingFont.variable} font-sans antialiased`}
-			>
+			<body className={`${kanit.variable} ${architectsDaughter.variable} antialiased`}>
 				{children}
 			</body>
 		</html>

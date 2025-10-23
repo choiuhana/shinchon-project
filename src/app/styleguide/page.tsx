@@ -1,13 +1,15 @@
-import Link from "next/link";
+import type { ComponentProps } from "react";
+
 import {
-	Table,
-	TableBody,
-	TableCaption,
-	TableCell,
-	TableHead,
-	TableHeader,
-	TableRow,
-} from "@/components/ui/table";
+	brandPrinciples,
+	colorPalette,
+	gradientTokens,
+	motionGuidelines,
+	radiiScale,
+	shadowTokens,
+	spacingScale,
+	typographyScale,
+} from "@/lib/design-tokens";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -19,311 +21,668 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+	Table,
+	TableBody,
+	TableCell,
+	TableHead,
+	TableHeader,
+	TableRow,
+} from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
-import {
-	CalendarDays,
-	MapPin,
-	Sparkles,
-} from "lucide-react";
 
-const quickInfo = [
+type ButtonVariant = ComponentProps<typeof Button>["variant"];
+type BadgeVariant = ComponentProps<typeof Badge>["variant"];
+
+const buttonShowcase: Array<{
+	label: string;
+	variant: ButtonVariant;
+	text: string;
+	description: string;
+	size?: ComponentProps<typeof Button>["size"];
+}> = [
 	{
-		title: "입학 상담",
-		description:
-			"온라인으로 손쉽게 신청하면 상담 선생님이 24시간 이내에 연락드립니다.",
-		action: "상담 예약하기",
-		href: "#admission-consult",
-		icon: Sparkles,
-		iconBg: "bg-sky-100",
+		label: "Primary CTA",
+		variant: "default",
+		text: "입학 상담 신청",
+		description: "가장 중요한 전환을 유도하는 기본 버튼 스타일.",
+		size: "lg",
 	},
 	{
-		title: "캠퍼스 투어",
-		description:
-			"실내외 교실과 놀이 공간을 직접 둘러보는 30분 투어 프로그램을 운영합니다.",
-		action: "투어 신청",
-		href: "#campus-tour",
-		icon: MapPin,
-		iconBg: "bg-rose-100",
+		label: "Gradient Highlight",
+		variant: "gradient",
+		text: "캠퍼스 투어 예약",
+		description: "히어로나 주요 섹션에서 시선을 끌 때 사용합니다.",
+		size: "lg",
 	},
 	{
-		title: "교육 프로그램",
-		description:
-			"몬테소리 · 생태 체험 · 이중언어 수업이 하루 속에서 자연스럽게 이어집니다.",
-		action: "프로그램 보기",
-		href: "#programs",
-		icon: CalendarDays,
-		iconBg: "bg-amber-100",
+		label: "Secondary CTA",
+		variant: "secondary",
+		text: "교육 프로그램 살펴보기",
+		description: "보조 행동을 안내할 때 어울리는 파스텔 톤.",
+		size: "lg",
+	},
+	{
+		label: "Outline / Quiet",
+		variant: "outline",
+		text: "학부모 후기 보기",
+		description: "화이트 배경 위에서 조용히 보조 액션을 제공.",
+	},
+	{
+		label: "Soft Surface",
+		variant: "soft",
+		text: "주간 일정 확인",
+		description: "Calendars, 카드 내부 서브 액션 용도.",
+	},
+	{
+		label: "Ghost Link",
+		variant: "ghost",
+		text: "소식 더 보기",
+		description: "텍스트 중심 영역이나 컬러 대비가 강한 배경에서 사용.",
+		size: "default",
+	},
+	{
+		label: "Text Link",
+		variant: "link",
+		text: "FAQ 전체보기",
+		description: "본문 내 인라인 링크 스타일.",
 	},
 ];
 
-const programTabs = [
+const badgeShowcase: Array<{
+	label: string;
+	variant: BadgeVariant;
+	text: string;
+	description: string;
+}> = [
 	{
-		value: "montessori",
-		label: "몬테소리",
-		summary:
-			"감각 교구를 활용한 집중 활동으로 스스로 학습하고 성장하는 힘을 길러줍니다.",
-		points: ["교구 기반 감각 교육", "자율·책임 중심 일과", "개인 맞춤 관찰기록"],
+		label: "Primary",
+		variant: "default",
+		text: "Premium",
+		description: "프로그램 대표 태그, 핵심 라벨에 사용.",
 	},
 	{
-		value: "nature",
-		label: "생태 체험",
-		summary:
-			"텃밭 가꾸기, 숲 체험 등 자연 속에서 오감과 호기심을 키우는 프로젝트 수업입니다.",
-		points: ["주 1회 숲 체험", "계절별 생태 프로젝트", "환경 감수성 교육"],
+		label: "Sunshine",
+		variant: "sunshine",
+		text: "Event",
+		description: "행사/이벤트 같은 밝은 톤 하이라이트.",
 	},
 	{
-		value: "bilingual",
-		label: "이중언어",
-		summary:
-			"놀이 중심 영어 환경으로 자연스럽게 의사소통 능력을 기르는 듀얼 러닝 프로그램.",
-		points: ["영어 몰입 스토리 타임", "원어민 교사 상주", "음악·미술 융합 활동"],
+		label: "Seafoam",
+		variant: "mint",
+		text: "Open",
+		description: "편안한 긍정 상태, 교사 추천 포인트에 사용.",
+	},
+	{
+		label: "Info",
+		variant: "info",
+		text: "Guide",
+		description: "도움말, 가이드 배지에 활용.",
+	},
+	{
+		label: "Warning",
+		variant: "warning",
+		text: "D-3",
+		description: "마감 임박, 유의 메시지를 전달.",
+	},
+	{
+		label: "Outline",
+		variant: "outline",
+		text: "New",
+		description: "밝은 배경에서 조용한 상태를 표현.",
 	},
 ];
 
-const noticeRows = [
+const componentTableRows = [
 	{
-		title: "2025학년도 2분기 입학 설명회 안내",
-		category: "입학",
-		date: "2025-11-05",
+		title: "2025학년도 입학 설명회",
+		status: { label: "모집 중", variant: "mint" as BadgeVariant },
+		date: "2025.11.05",
+		audience: "예비 학부모",
 	},
 	{
-		title: "11월 생태 체험 수업 안내",
-		category: "프로그램",
-		date: "2025-10-27",
+		title: "11월 숲 체험 클래스",
+		status: { label: "마감 임박", variant: "warning" as BadgeVariant },
+		date: "2025.10.27",
+		audience: "전체 반",
 	},
 	{
-		title: "학부모-교사 1:1 상담 주간",
-		category: "소통",
-		date: "2025-10-15",
+		title: "학부모 상담 주간",
+		status: { label: "예약 진행", variant: "info" as BadgeVariant },
+		date: "2025.10.15",
+		audience: "담임 교사",
 	},
 ];
+
+const navigationTabs = [
+	{
+		value: "overview",
+		label: "원 소개",
+		title: "아이의 하루가 반짝이는 공간",
+		copy: "교실과 야외 공간이 자연스럽게 연결되는 구조로 아이들의 호기심을 자극합니다.",
+	},
+	{
+		value: "curriculum",
+		label: "교육 프로그램",
+		title: "몬테소리 · 생태 · 이중언어",
+		copy: "일과 속에서 감각, 자연, 언어 경험이 유기적으로 이어지는 통합 커리큘럼입니다.",
+	},
+	{
+		value: "admission",
+		label: "입학 안내",
+		title: "3단계 온라인 절차",
+		copy: "상담 신청 → 캠퍼스 투어 → 지원서 접수 순으로 진행되며, 온라인으로 간편하게 완료할 수 있습니다.",
+	},
+];
+
+function ColorGroup({
+	label,
+	tokens,
+}: {
+	label: string;
+	tokens: typeof colorPalette.brand;
+}) {
+	return (
+		<div className="space-y-4">
+			<h3 className="text-lg font-semibold text-slate-800">{label}</h3>
+			<div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+				{tokens.map((token) => (
+					<Card
+						key={token.token}
+						className="h-full border-none bg-white/85 backdrop-blur-sm"
+						style={{ boxShadow: "var(--shadow-soft)" }}
+					>
+						<CardHeader className="space-y-3">
+							<div
+								className="h-20 w-full rounded-2xl"
+								style={{ background: token.value }}
+							/>
+							<CardTitle className="text-base text-slate-900">
+								{token.name}
+							</CardTitle>
+							<CardDescription className="font-mono text-xs text-slate-500">
+								{token.token} · {token.value}
+							</CardDescription>
+						</CardHeader>
+						<CardContent className="text-sm text-slate-600">
+							{token.usage}
+						</CardContent>
+					</Card>
+				))}
+			</div>
+		</div>
+	);
+}
+
+function ScaleList({
+	title,
+	tokens,
+}: {
+	title: string;
+	tokens: typeof spacingScale;
+}) {
+	return (
+		<Card
+			className="border-none bg-white/80"
+			style={{ boxShadow: "var(--shadow-soft)" }}
+		>
+			<CardHeader>
+				<CardTitle className="text-base text-slate-900">{title}</CardTitle>
+			</CardHeader>
+			<CardContent className="space-y-3">
+				{tokens.map((token) => (
+					<div
+						key={token.token}
+						className="flex items-center justify-between rounded-2xl bg-[#F8F6FF] px-4 py-3"
+					>
+						<div>
+							<p className="font-mono text-xs text-slate-500">
+								{token.token}
+							</p>
+							<p className="text-sm text-slate-700">{token.usage}</p>
+						</div>
+						<span className="text-sm font-semibold text-slate-700">
+							{token.value}
+						</span>
+					</div>
+				))}
+			</CardContent>
+		</Card>
+	);
+}
 
 export default function StyleguidePage() {
 	return (
-		<div className="space-y-20 pb-24">
-			<section className="relative overflow-hidden rounded-[56px] border border-sky-100 bg-gradient-to-br from-sky-50 via-rose-50 to-amber-50 px-10 py-16 shadow-[0_24px_60px_-40px_rgba(15,23,42,0.6)]">
-				<div className="absolute -left-20 top-6 h-56 w-56 rounded-full bg-sky-200/35 blur-3xl" />
-				<div className="absolute -right-16 bottom-8 h-64 w-64 rounded-full bg-rose-200/35 blur-3xl" />
-				<div className="absolute right-14 top-10 hidden h-24 w-24 rounded-full bg-amber-200/60 md:block" />
-				<div className="relative z-10 flex flex-col gap-6 text-slate-900">
-					<Badge className="w-fit rounded-full bg-white/90 px-4 py-2 text-xs font-semibold uppercase tracking-wide text-sky-600 shadow-sm">
-						Lovely &amp; Bright Campus
+		<div className="space-y-16 pb-24">
+			<section className="relative overflow-hidden rounded-[56px] border border-white/60 bg-white/75 px-10 py-16 shadow-[var(--shadow-ambient)]">
+				<div
+					className="absolute -left-20 top-6 h-64 w-64 rounded-full blur-3xl"
+					style={{ background: "#BCD3FF" }}
+				/>
+				<div
+					className="absolute -right-16 bottom-8 h-72 w-72 rounded-full blur-3xl"
+					style={{ background: "#FFD1EC" }}
+				/>
+				<div
+					className="absolute right-20 top-10 hidden h-36 w-36 rounded-full blur-3xl md:block"
+					style={{ background: "#FFE9A8" }}
+				/>
+				<div className="relative z-10 space-y-6 text-slate-900">
+					<Badge className="w-fit rounded-full bg-white/80 px-4 py-2 text-xs font-semibold uppercase tracking-wide text-slate-600 shadow-sm">
+						Petit Kindergarten System
 					</Badge>
 					<h1 className="font-heading text-balance text-4xl font-semibold leading-tight text-slate-900 md:text-5xl">
-						아이의 하루가 반짝이는
-						<br className="hidden md:block" /> 신촌몬테소리유치원
+						포근한 파스텔 무드로 정리한
+						<br className="hidden md:block" /> 신촌몬테소리 디자인 시스템
 					</h1>
-					<p className="max-w-2xl text-lg text-slate-600 md:text-xl">
-						놀이와 프로젝트가 자연스럽게 이어지는 몬테소리 · 생태 체험 · 이중언어 커리큘럼으로
-						아이의 호기심과 창의력을 키워요.
+					<p className="max-w-3xl text-lg text-slate-600 md:text-xl">
+						ThemeForest Petit Kindergarten 프리뷰의 라우팅과 톤앤매너를 참고해 색상,
+						타이포그래피, 공간, 그림자 토큰을 정리했습니다. 이 가이드는 추후 페이지 구현 전
+						일관된 비주얼을 보장합니다.
 					</p>
-					<div className="flex flex-wrap gap-3">
-						<Button
-							size="lg"
-							asChild
-							className="bg-gradient-to-r from-sky-500 via-indigo-500 to-violet-500 px-8 text-lg font-semibold text-white shadow-lg shadow-sky-500/30"
-						>
-							<Link href="#admission-consult">입학 상담 신청</Link>
-						</Button>
-						<Button
-							variant="secondary"
-							size="lg"
-							className="border border-white/80 bg-white/75 px-8 text-lg text-slate-900 shadow-sm hover:bg-white"
-						>
-							<Link href="#campus-tour">캠퍼스 투어 예약</Link>
-						</Button>
-					</div>
 				</div>
 			</section>
 
-			<section className="space-y-8" id="quick-links">
-				<header className="max-w-2xl space-y-3">
-					<h2 className="font-heading text-3xl font-semibold text-slate-900 md:text-4xl">
-						한눈에 보는 핵심 서비스
+			<section className="space-y-6" id="principles">
+				<header className="space-y-3">
+					<h2 className="font-heading text-3xl font-semibold text-slate-900">
+						Design principles
 					</h2>
-					<p className="text-slate-600 md:text-lg">
-						가장 많이 찾는 정보와 서비스 흐름을 카드형으로 배치해 모바일에서도 빠르게 접근할
-						수 있도록 구성합니다.
+					<p className="max-w-2xl text-slate-600">
+						샘플 테마에서 느껴지는 온기, 공간감, 플레이풀함을 유지하기 위한 핵심 원칙입니다.
 					</p>
 				</header>
 				<div className="grid gap-6 md:grid-cols-3">
-					{quickInfo.map((item) => (
+					{brandPrinciples.map((principle) => (
 						<Card
-							key={item.title}
-							className="relative h-full overflow-hidden border-none bg-white/85 shadow-[0_20px_45px_-30px_rgba(15,23,42,0.65)] backdrop-blur-sm transition hover:-translate-y-1 hover:shadow-[0_28px_60px_-30px_rgba(37,99,235,0.35)]"
+							key={principle.title}
+							className="border-none bg-white/85"
+							style={{ boxShadow: "var(--shadow-soft)" }}
 						>
-							<div className="absolute -right-10 -top-10 h-36 w-36 rounded-full bg-sky-200/30 blur-2xl" />
-							<CardHeader className="space-y-4">
-								<div className={`flex h-16 w-16 items-center justify-center rounded-2xl ${item.iconBg}`}>
-									<item.icon className="h-8 w-8 text-slate-700" />
-								</div>
-								<CardTitle className="font-heading text-2xl text-slate-900">
-									{item.title}
+							<CardHeader className="space-y-2">
+								<CardTitle className="text-xl text-slate-900">
+									{principle.title}
 								</CardTitle>
-								<CardDescription className="text-base leading-relaxed text-slate-600">
-									{item.description}
+								<CardDescription className="text-slate-600">
+									{principle.description}
 								</CardDescription>
 							</CardHeader>
-							<CardContent>
-								<Button variant="link" asChild className="px-0 text-sky-600">
-									<Link href={item.href}>{item.action} →</Link>
-								</Button>
+							<CardContent className="text-sm text-slate-500">
+								{principle.detail}
 							</CardContent>
 						</Card>
 					))}
 				</div>
 			</section>
 
-			<section className="space-y-8" id="programs">
-				<header className="max-w-2xl space-y-3">
-					<h2 className="font-heading text-3xl font-semibold text-slate-900 md:text-4xl">
-						교육 프로그램 미리보기
+			<section className="space-y-8" id="colors">
+				<header className="space-y-3">
+					<h2 className="font-heading text-3xl font-semibold text-slate-900">
+						Color palette
 					</h2>
-					<p className="text-slate-600 md:text-lg">
-						Tabs 컴포넌트를 활용해 핵심 커리큘럼을 탐색할 수 있는 인터랙션을 제공합니다. 각 탭의
-						내용은 상세 페이지와 연동됩니다.
+					<p className="max-w-3xl text-slate-600">
+						CTA, 섹션 배경, 카드에 반복적으로 등장하는 파스텔 톤을 토큰화했습니다. 모든 색상은
+						WCAG 대비를 위해 텍스트 컬러와 함께 사용해야 합니다.
 					</p>
 				</header>
-				<Tabs
-					defaultValue={programTabs[0]?.value}
-					className="rounded-[36px] border border-slate-200 bg-white/90 p-8 shadow-[0_24px_60px_-45px_rgba(15,23,42,0.6)]"
-				>
-					<TabsList className="grid w-full grid-cols-1 gap-3 bg-transparent text-base md:grid-cols-3">
-						{programTabs.map((tab) => (
-							<TabsTrigger
-								key={tab.value}
-								value={tab.value}
-								className="rounded-full border border-transparent bg-slate-100/70 px-6 py-3 text-slate-600 transition data-[state=active]:border-sky-200 data-[state=active]:bg-gradient-to-r data-[state=active]:from-sky-100 data-[state=active]:to-sky-50 data-[state=active]:font-semibold data-[state=active]:text-sky-700"
-							>
-								{tab.label}
-							</TabsTrigger>
-						))}
-					</TabsList>
-					{programTabs.map((tab) => (
-						<TabsContent key={tab.value} value={tab.value} className="space-y-4 bg-white">
-							<Card className="border-none bg-sky-50/70">
-								<CardHeader>
-									<CardTitle className="font-heading text-2xl font-semibold text-slate-900">
-										{tab.label} 프로그램
-									</CardTitle>
-									<CardDescription className="text-slate-700">{tab.summary}</CardDescription>
-								</CardHeader>
-								<CardContent>
-									<ul className="grid gap-2 text-slate-700 md:grid-cols-2">
-										{tab.points.map((point) => (
-											<li key={point} className="flex items-start gap-2">
-												<span className="mt-1 inline-flex h-2.5 w-2.5 rounded-full bg-sky-500" />
-												<span>{point}</span>
-											</li>
-										))}
-									</ul>
-								</CardContent>
-							</Card>
-						</TabsContent>
+				<div className="space-y-10">
+					<ColorGroup label="Brand" tokens={colorPalette.brand} />
+					<ColorGroup label="Neutrals" tokens={colorPalette.neutrals} />
+					<ColorGroup label="Feedback" tokens={colorPalette.feedback} />
+				</div>
+				<div className="grid gap-4 md:grid-cols-2">
+					{gradientTokens.map((gradient) => (
+						<Card
+							key={gradient.token}
+							className="overflow-hidden border-none text-white"
+							style={{
+								background: gradient.value,
+								boxShadow: "var(--shadow-elevated)",
+							}}
+						>
+							<CardHeader>
+								<CardTitle className="text-lg">{gradient.name}</CardTitle>
+								<CardDescription className="font-mono text-xs text-white/80">
+									{gradient.token}
+								</CardDescription>
+							</CardHeader>
+							<CardContent className="text-sm text-white/90">
+								{gradient.usage}
+							</CardContent>
+						</Card>
 					))}
-				</Tabs>
+				</div>
 			</section>
 
-			<section className="space-y-8" id="notice-preview">
-				<header className="max-w-2xl space-y-3">
-					<h2 className="font-heading text-3xl font-semibold text-slate-900 md:text-4xl">
-						알림마당 미리보기
+			<section className="space-y-8" id="typography">
+				<header className="space-y-3">
+					<h2 className="font-heading text-3xl font-semibold text-slate-900">
+						Typography
 					</h2>
-					<p className="text-slate-600 md:text-lg">
-						Table 컴포넌트는 공지·가정통신문·행사 등 게시판 목록에 사용됩니다. 상태 배지는 카테고리
-						컬러로 구분하여 가독성을 높입니다.
+					<p className="max-w-2xl text-slate-600">
+						Fredoka와 Noto Sans KR의 조합으로 친근하면서도 가독성 높은 위계를 형성합니다.
+						아래 스케일을 기준으로 섹션별 헤더와 본문 용도를 결정합니다.
 					</p>
 				</header>
-				<Table className="overflow-hidden rounded-3xl border border-slate-100 bg-white shadow-[0_18px_48px_-36px_rgba(15,23,42,0.55)]">
-					<TableCaption>최근 등록된 알림</TableCaption>
+				<div className="grid gap-6">
+					{typographyScale.map((item) => (
+						<Card
+							key={item.token}
+							className="border-none bg-white/80"
+							style={{ boxShadow: "var(--shadow-soft)" }}
+						>
+							<CardHeader className="space-y-1">
+								<CardTitle className="text-base text-slate-900">
+									{item.name}
+								</CardTitle>
+								<CardDescription className="font-mono text-xs text-slate-500">
+									{item.token} · {item.size} / {item.lineHeight}
+								</CardDescription>
+							</CardHeader>
+							<CardContent className="space-y-3">
+								<p
+									className="font-heading text-slate-900"
+									style={{
+										fontSize: item.size,
+										lineHeight: item.lineHeight,
+									}}
+								>
+									{item.sample}
+								</p>
+								<p className="text-sm text-slate-600">{item.usage}</p>
+							</CardContent>
+						</Card>
+					))}
+				</div>
+			</section>
+
+			<section className="space-y-8" id="layout">
+				<header className="space-y-3">
+					<h2 className="font-heading text-3xl font-semibold text-slate-900">
+						Spacing &amp; layout
+					</h2>
+					<p className="max-w-2xl text-slate-600">
+						4pt 계열을 기반으로 한 공간 토큰은 카드, 섹션, 폼에서 일관된 시각적 리듬을 유지하게
+						해줍니다.
+					</p>
+				</header>
+				<div className="grid gap-6 lg:grid-cols-2">
+					<ScaleList title="Spacing scale" tokens={spacingScale} />
+					<ScaleList title="Radius scale" tokens={radiiScale} />
+				</div>
+			</section>
+
+			<section className="space-y-8" id="depth">
+				<header className="space-y-3">
+					<h2 className="font-heading text-3xl font-semibold text-slate-900">
+						Depth &amp; elevation
+					</h2>
+					<p className="max-w-2xl text-slate-600">
+						흐릿한 그림자는 어린이 테마 특유의 따뜻함을 줍니다. hover 시 그림자를 강조하여
+						인터랙션을 드러냅니다.
+					</p>
+				</header>
+				<Table className="overflow-hidden rounded-3xl border-none bg-white/85 shadow-[var(--shadow-soft)]">
 					<TableHeader>
-						<TableRow>
-							<TableHead>제목</TableHead>
-							<TableHead>분류</TableHead>
-							<TableHead className="text-right">게시일</TableHead>
+						<TableRow className="bg-[#F5F2FF] text-slate-700">
+							<TableHead className="font-semibold">Token</TableHead>
+							<TableHead className="font-semibold">Value</TableHead>
+							<TableHead className="font-semibold">Usage</TableHead>
 						</TableRow>
 					</TableHeader>
 					<TableBody>
-						{noticeRows.map((row) => (
-							<TableRow key={row.title}>
-								<TableCell className="font-medium text-slate-800">
-									{row.title}
+						{shadowTokens.map((token) => (
+							<TableRow key={token.token} className="text-slate-700">
+								<TableCell className="font-mono text-xs text-slate-500">
+									{token.token}
 								</TableCell>
-								<TableCell>
-									<Badge
-										variant="secondary"
-										className="rounded-full bg-sky-100 px-3 py-1 text-sky-700"
-									>
-										{row.category}
-									</Badge>
+								<TableCell>{token.value}</TableCell>
+								<TableCell className="text-sm text-slate-600">
+									{token.usage}
 								</TableCell>
-								<TableCell className="text-right text-slate-600">{row.date}</TableCell>
 							</TableRow>
 						))}
 					</TableBody>
 				</Table>
 			</section>
 
-			<section className="space-y-8" id="admission-consult">
-				<header className="max-w-2xl space-y-3">
-					<h2 className="font-heading text-3xl font-semibold text-slate-900 md:text-4xl">
-						입학 상담 폼 예시
+			<section className="space-y-8" id="motion">
+				<header className="space-y-3">
+					<h2 className="font-heading text-3xl font-semibold text-slate-900">
+						Motion
 					</h2>
-					<p className="text-slate-600 md:text-lg">
-						shadcn 폼 컴포넌트를 조합해 상담 신청 섹션을 구성합니다. 실제 구현 시에는 필수값 검증,
-						전송 성공 메시지를 연결합니다.
+					<p className="max-w-2xl text-slate-600">
+						Playful motion은 과하지 않은 지속시간과 완만한 곡선을 사용해 부드러운 경험을
+						제공합니다.
 					</p>
 				</header>
-				<Card className="border-none bg-gradient-to-br from-white via-sky-50/60 to-rose-50/60 shadow-[0_22px_55px_-40px_rgba(37,99,235,0.45)] backdrop-blur">
-					<CardHeader>
-						<CardTitle className="font-heading text-2xl font-semibold text-slate-900">
-							바로 상담 신청하기
-						</CardTitle>
-						<CardDescription className="text-base text-slate-600">
-							연락 가능한 시간을 남겨주시면 24시간 이내로 담당 교사가 연락드립니다.
-						</CardDescription>
-					</CardHeader>
-					<CardContent className="space-y-6">
-						<div className="grid gap-4 md:grid-cols-2">
-							<div className="space-y-2">
-								<Label htmlFor="parent-name">보호자 성함</Label>
-								<Input id="parent-name" placeholder="홍길동" />
-							</div>
-							<div className="space-y-2">
-								<Label htmlFor="phone">연락처</Label>
-								<Input id="phone" placeholder="010-1234-5678" />
-							</div>
-							<div className="space-y-2">
-								<Label htmlFor="child-name">자녀 이름</Label>
-								<Input id="child-name" placeholder="홍아름" />
-							</div>
-							<div className="space-y-2">
-								<Label htmlFor="birth">생년월일</Label>
-								<Input id="birth" type="date" />
-							</div>
+				<div className="grid gap-4 md:grid-cols-3">
+					{motionGuidelines.map((item) => (
+						<Card
+							key={item.name}
+							className="border-none bg-white/80"
+							style={{ boxShadow: "var(--shadow-soft)" }}
+						>
+							<CardHeader>
+								<CardTitle className="text-lg text-slate-900">
+									{item.name}
+								</CardTitle>
+								<CardDescription className="font-mono text-xs text-slate-500">
+									{item.token}
+								</CardDescription>
+							</CardHeader>
+							<CardContent className="text-sm text-slate-600">
+								{item.usage}
+							</CardContent>
+						</Card>
+					))}
+				</div>
+			</section>
+
+			<section className="space-y-8" id="components">
+				<header className="space-y-3">
+					<h2 className="font-heading text-3xl font-semibold text-slate-900">
+						Components
+					</h2>
+					<p className="max-w-3xl text-slate-600">
+						디자인 토큰을 적용한 핵심 UI 컴포넌트를 모아 페이지 제작 시 참조합니다.
+					</p>
+				</header>
+				<Tabs defaultValue="buttons" className="space-y-6">
+					<TabsList>
+						<TabsTrigger value="buttons">Buttons</TabsTrigger>
+						<TabsTrigger value="badges">Badges</TabsTrigger>
+						<TabsTrigger value="forms">Forms</TabsTrigger>
+						<TabsTrigger value="navigation">Tabs</TabsTrigger>
+						<TabsTrigger value="table">Table</TabsTrigger>
+					</TabsList>
+
+					<TabsContent value="buttons" className="space-y-4">
+						<p className="text-sm text-slate-600">
+							버튼은 최소 높이 44px을 유지하며, 그림자는 shadow-soft 이상을 사용합니다.
+						</p>
+						<div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+							{buttonShowcase.map((item) => (
+								<Card
+									key={item.label}
+									className="border-none bg-white/85"
+									style={{ boxShadow: "var(--shadow-soft)" }}
+								>
+									<CardHeader className="space-y-1">
+										<CardTitle className="text-base text-slate-900">
+											{item.label}
+										</CardTitle>
+										<CardDescription className="text-slate-600">
+											{item.description}
+										</CardDescription>
+									</CardHeader>
+									<CardContent>
+										<Button variant={item.variant} size={item.size}>
+											{item.text}
+										</Button>
+									</CardContent>
+								</Card>
+							))}
 						</div>
-						<div className="space-y-2">
-							<Label htmlFor="message">문의 내용</Label>
-							<Textarea
-								id="message"
-								rows={4}
-								placeholder="궁금하신 내용을 자유롭게 남겨주세요. (예: 입학 가능 일정, 프로그램 문의 등)"
-							/>
+					</TabsContent>
+
+					<TabsContent value="badges" className="space-y-4">
+						<p className="text-sm text-slate-600">
+							배지는 상태 정보를 명확하게 구분하고, 텍스트는 1~2단어로 간결하게 유지합니다.
+						</p>
+						<div className="grid gap-5 md:grid-cols-3">
+							{badgeShowcase.map((item) => (
+								<Card
+									key={item.label}
+									className="border-none bg-white/85"
+									style={{ boxShadow: "var(--shadow-soft)" }}
+								>
+									<CardHeader className="space-y-1">
+										<CardTitle className="text-base text-slate-900">
+											{item.label}
+										</CardTitle>
+										<CardDescription className="text-slate-600">
+											{item.description}
+										</CardDescription>
+									</CardHeader>
+									<CardContent>
+										<Badge variant={item.variant}>{item.text}</Badge>
+									</CardContent>
+								</Card>
+							))}
 						</div>
-						<div className="flex flex-wrap items-center justify-between gap-4">
-							<p className="text-sm text-slate-500">
-								상담 신청 시 개인정보 처리방침에 동의한 것으로 간주됩니다.
-							</p>
-							<Button
-								size="lg"
-								className="bg-gradient-to-r from-emerald-400 via-sky-400 to-indigo-500 px-8 font-semibold text-white shadow-lg shadow-sky-400/30"
-							>
-								상담 신청 보내기
-							</Button>
-						</div>
-					</CardContent>
-				</Card>
+					</TabsContent>
+
+					<TabsContent value="forms">
+						<Card
+							className="border-none bg-white/85"
+							style={{ boxShadow: "var(--shadow-soft)" }}
+						>
+							<CardHeader className="space-y-2">
+								<CardTitle className="text-xl text-slate-900">
+									입학 상담 폼 베이스
+								</CardTitle>
+								<CardDescription className="text-slate-600">
+									radius-xs와 space-sm 토큰으로 부드러운 곡선과 여유 있는 필드 간격을 확보합니다.
+								</CardDescription>
+							</CardHeader>
+							<CardContent>
+								<form className="grid gap-[var(--space-sm)] md:grid-cols-2">
+									<div className="space-y-2">
+										<Label htmlFor="parent-name">학부모 성함</Label>
+										<Input id="parent-name" placeholder="홍길동" />
+									</div>
+									<div className="space-y-2">
+										<Label htmlFor="child-name">자녀 이름</Label>
+										<Input id="child-name" placeholder="홍자람" />
+									</div>
+									<div className="space-y-2 md:col-span-2">
+										<Label htmlFor="contact">연락 가능한 전화번호</Label>
+										<Input id="contact" placeholder="010-1234-5678" />
+									</div>
+									<div className="space-y-2 md:col-span-2">
+										<Label htmlFor="message">상담 요청 메모</Label>
+										<Textarea
+											id="message"
+											placeholder="아이의 관심사나 궁금한 점을 적어주세요."
+										/>
+									</div>
+									<div className="flex flex-wrap items-center gap-3 md:col-span-2">
+										<Button type="submit" variant="default" size="lg">
+											신청 완료하기
+										</Button>
+										<Button type="button" variant="ghost">
+											상담 절차 안내 보기
+										</Button>
+									</div>
+								</form>
+							</CardContent>
+						</Card>
+					</TabsContent>
+
+					<TabsContent value="navigation">
+						<Card
+							className="border-none bg-white/85"
+							style={{ boxShadow: "var(--shadow-soft)" }}
+						>
+							<CardHeader className="space-y-2">
+								<CardTitle className="text-xl text-slate-900">
+									탭 내비게이션
+								</CardTitle>
+								<CardDescription className="text-slate-600">
+									TabsList에는 space-2xs 패딩을, TabsTrigger에는 radius-xs와 shadow-soft를 적용합니다.
+								</CardDescription>
+							</CardHeader>
+							<CardContent className="space-y-4">
+								<Tabs defaultValue="overview" className="space-y-4">
+									<TabsList>
+										{navigationTabs.map((tab) => (
+											<TabsTrigger key={tab.value} value={tab.value}>
+												{tab.label}
+											</TabsTrigger>
+										))}
+									</TabsList>
+									{navigationTabs.map((tab) => (
+										<TabsContent key={tab.value} value={tab.value}>
+											<div className="rounded-[var(--radius-md)] border border-[var(--border)] bg-white/90 p-[var(--space-md)] shadow-[var(--shadow-soft)]">
+												<h3 className="font-heading text-xl text-[var(--brand-primary)]">
+													{tab.title}
+												</h3>
+												<p className="mt-2 text-sm text-slate-600">{tab.copy}</p>
+											</div>
+										</TabsContent>
+									))}
+								</Tabs>
+							</CardContent>
+						</Card>
+					</TabsContent>
+
+					<TabsContent value="table">
+						<Card
+							className="border-none bg-white/85"
+							style={{ boxShadow: "var(--shadow-soft)" }}
+						>
+							<CardHeader className="space-y-2">
+								<CardTitle className="text-xl text-slate-900">
+									알림/이벤트 리스트
+								</CardTitle>
+								<CardDescription className="text-slate-600">
+									테이블 컨테이너는 radius-md, space-sm 패딩을 적용합니다.
+								</CardDescription>
+							</CardHeader>
+							<CardContent className="space-y-4">
+								<Table>
+									<TableHeader>
+										<TableRow>
+											<TableHead>제목</TableHead>
+											<TableHead>상태</TableHead>
+											<TableHead>일자</TableHead>
+											<TableHead>대상</TableHead>
+										</TableRow>
+									</TableHeader>
+									<TableBody>
+										{componentTableRows.map((row) => (
+											<TableRow key={row.title}>
+												<TableCell>{row.title}</TableCell>
+												<TableCell>
+													<Badge variant={row.status.variant}>
+														{row.status.label}
+													</Badge>
+												</TableCell>
+												<TableCell>{row.date}</TableCell>
+												<TableCell>{row.audience}</TableCell>
+											</TableRow>
+										))}
+									</TableBody>
+								</Table>
+								<p className="text-xs text-muted-foreground">
+									열 간격은 space-sm, 행 높이는 최소 52px을 유지합니다.
+								</p>
+							</CardContent>
+						</Card>
+					</TabsContent>
+				</Tabs>
 			</section>
 		</div>
 	);

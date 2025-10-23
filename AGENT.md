@@ -26,15 +26,15 @@
 
 ## Technical Decisions
 - **UI Layer**: shadcn/ui + Tailwind 커스터마이징으로 일관된 디자인 시스템 유지 (`신촌몬테소리유치원_웹사이트_개선_요구사항_명세서.md:125`, `신촌몬테소리유치원_개선안_요약본.md:71`, `신촌몬테소리유치원_기능_명세서.md:7`).
-- **Selected Application Stack**: Next.js(App Router) + tRPC + Prisma + PostgreSQL + Redis + NextAuth. 요구사항 문서가 제시한 Node.js 계열 권장 스택을 TypeScript 전용으로 구체화하여 프런트/백이 스키마를 공유하도록 합니다 (`신촌몬테소리유치원_웹사이트_개선_요구사항_명세서.md:115-125`, `1235-1244`).
-- **Server Responsibilities**: tRPC 라우터로 회원/자녀/게시판/상담/파일 업로드/알림 API를 구성하고 Prisma 스키마로 영속 데이터를 관리합니다 (`신촌몬테소리유치원_기능_명세서.md:27-74`, `252-320`).
+- **Selected Application Stack**: Next.js(App Router) 풀스택 기능(Server Components, Route Handlers, Server Actions) + NextAuth + Vercel Postgres(Vercel DB). 요구사항 문서가 제시한 Node.js 계열 권장 스택을 서버리스 운영 모델로 구체화해 프런트/백이 타입과 데이터 규약을 공유하도록 합니다 (`신촌몬테소리유치원_웹사이트_개선_요구사항_명세서.md:115-125`, `1235-1244`).
+- **Server Responsibilities**: Next.js Route Handler와 Server Action으로 회원/자녀/게시판/상담/파일 업로드/알림 흐름을 구성하고 `@vercel/postgres`를 통해 영속 데이터를 관리합니다 (`신촌몬테소리유치원_기능_명세서.md:27-74`, `252-320`).
 - **Integrations**: SMS 인증, 이메일 발송, 지도 API, Google Analytics/Hotjar 등을 모듈화하여 적용합니다 (`신촌몬테소리유치원_웹사이트_개선_요구사항_명세서.md:1207-1249`).
 - **Testing & Compliance**: 접근성·성능·보안·반응형·브라우저 호환 테스트를 출시 필수 조건으로 유지합니다 (`신촌몬테소리유치원_웹사이트_개선_요구사항_명세서.md:1200-1250`).
 
 ## Admin Scope & Kickoff Plan
 - 관리자 대시보드, 콘텐츠 관리, 통계, 자동 백업 요구사항을 초기에 함께 구현합니다 (`신촌몬테소리유치원_개선안_요약본.md:99-109`, `신촌몬테소리유치원_웹사이트_개선_요구사항_명세서.md:234-244`).
-- Next.js 내 `/admin` 경로나 별도 레이아웃을 준비하여 shadcn/ui 컴포넌트(테이블, 폼, 차트 등)로 구성하고, NextAuth + tRPC 미들웨어로 역할 기반 접근을 제어합니다 (`신촌몬테소리유치원_기능_명세서.md` 전반).
-- Prisma 스키마는 관리자와 학부모 포털이 동일한 데이터 모델을 공유하도록 설계합니다 (`신촌몬테소리유치원_기능_명세서.md:27-74`, `262-320`).
+- Next.js 내 `/admin` 경로나 별도 레이아웃을 준비하여 shadcn/ui 컴포넌트(테이블, 폼, 차트 등)로 구성하고, NextAuth + Route Handler/Server Action 가드로 역할 기반 접근을 제어합니다 (`신촌몬테소리유치원_기능_명세서.md` 전반).
+- Vercel DB 스키마는 관리자와 학부모 포털이 동일한 데이터 모델을 공유하도록 설계하고 버전 관리된 SQL 마이그레이션으로 추적합니다 (`신촌몬테소리유치원_기능_명세서.md:27-74`, `262-320`).
 
 ## Legacy Site Findings to Address
 - No viewport meta tag → mobile renders scaled-down (`신촌몬테소리유치원_웹사이트_개선_요구사항_명세서.md:111-123`).
@@ -50,6 +50,9 @@
 - `신촌몬테소리유치원_기능_명세서.md` — functional specs plus API/data models.
 - Repository root — Next.js(App Router) 기반 프런트엔드 (TypeScript, Tailwind, ESLint, npm).
 - `src/app/styleguide/page.tsx` — shadcn/ui 기반 컴포넌트 프리뷰 페이지 (Hero, 카드, 탭, 테이블, 폼 샘플).
+- `src/lib/db.ts` — Vercel DB(PostgreSQL) 연결을 위한 공유 헬퍼와 헬스체크 유틸리티.
+- `src/app/api/health/route.ts` — 서버리스 헬스 엔드포인트로 DB 연결 상태를 확인.
+- `src/lib/design-tokens.ts` — Petit 테마에 맞춘 컬러·타이포·스페이싱·섀도 토큰 정의.
 - `AGENT.md` (this file) — coordination reference and change log root.
 
 ## Workflow for Agents
@@ -66,11 +69,12 @@
 4. **Communication**
    - Keep references to spec line numbers when reporting changes to maintain traceability.
    - When introducing new tooling or architectural shifts, document rationale in both the relevant spec and the History Log.
+   - 사용자 요청에 따라 대화 및 보고는 기본적으로 한국어로 진행합니다.
 
 ## Immediate Next Steps (Suggested)
 - Document shadcn/ui 테마 변수와 적용 원칙(브랜드 컬러, 폰트 등)을 명세에 반영.
-- Integrate tRPC + Prisma + NextAuth + Redis into the Next.js project and outline auth/role middleware.
-- Model Prisma schema for 회원/자녀/게시판/상담/알림 및 설정 테이블, including admin roles.
+- Wire up NextAuth + `@vercel/postgres` 기반 데이터 계층을 연결하고 핵심 Server Action/Route Handler 인증 미들웨어 골격을 정의.
+- Model Vercel DB(PostgreSQL) 스키마와 마이그레이션(회원/자녀/게시판/상담/알림 및 설정 테이블 포함) 설계를 착수.
 - Scaffold `/admin` 레이아웃과 접근 제어 미들웨어 골격.
 - Draft migration plan for legacy content, especially parent portal data and media.
 
@@ -82,3 +86,5 @@
 - 2025-10-23 — Scaffolded Next.js project at repo root (TypeScript, Tailwind, ESLint, npm) and verified with `npm run lint`.
 - 2025-10-23 — Initialized shadcn/ui CLI, added core components (button, card, badge, tabs, table, input, textarea, label), created `/styleguide` preview page, and restructured project to live at root for simpler layout.
 - 2025-10-23 — Applied kindergarten-friendly pastel theme tokens in `globals.css`, switched to Fredoka + Noto Sans KR fonts, and refreshed `/styleguide` to mirror Petit 레퍼런스 무드.
+- 2025-10-24 — 전반적인 백엔드 전략을 Next.js 서버리스 + Vercel DB(PostgreSQL) 기반으로 전환하고 공유 DB 헬퍼(`src/lib/db.ts`) 및 `/api/health` 헬스체크 엔드포인트를 추가, AGENT 가이드를 업데이트.
+- 2025-10-24 — Downloads 아카이브의 Petit Theme 디자인 시스템을 반영해 `globals.css`, UI 컴포넌트, 랜딩 페이지, `styleguide` 전반의 토큰과 서체를 교체.
