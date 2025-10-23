@@ -101,6 +101,8 @@
 - `src/app/news` — 알림마당 목록/카테고리/상세 페이지 스캐폴딩과 데모 데이터 연동.
 - `src/lib/data/news.ts` — 공지/가정통신문/행사 카테고리 더미 데이터 및 헬퍼.
 - `src/app/parents/page.tsx`, `src/app/member/login/page.tsx` — Coming Soon 플레이스홀더 페이지.
+- `src/app/member/register/page.tsx`, `src/app/member/register/actions.ts` — 회원가입 폼과 서버 액션.
+- `src/lib/auth/password.ts` — PBKDF2 기반 비밀번호 해시/검증 헬퍼.
 
 ## Workflow for Agents
 1. **Before Editing**
@@ -143,3 +145,4 @@
 - 2025-10-24 — Stage 3 선택 과업인 PWA 전략을 정의하고 범위·선행 조건·기술 선택을 AGENT 가이드에 기록.
 - 2025-10-25 — 공개 홈페이지 헤더/푸터를 공용 컴포넌트화하고 홈 섹션을 명세 기반으로 스캐폴딩, 알림마당/학부모 포털/로그인 플레이스홀더 라우트를 추가.
 - 2025-10-25 — 내부 Admin에서 News/공지 콘텐츠를 관리하는 전략과 NextAuth 승인 흐름 설계안을 작성하고 AGENT 가이드에 반영.
+- 2025-10-25 — 회원가입 폼과 서버 액션을 추가하고 PBKDF2 기반 비밀번호 해시 헬퍼를 도입.

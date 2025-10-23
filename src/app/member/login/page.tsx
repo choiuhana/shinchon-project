@@ -65,6 +65,9 @@ export default function MemberLoginPlaceholderPage() {
 								임시 계정 요청하기
 							</Link>
 						</Button>
+						<Button variant="link" asChild className="w-full text-[var(--brand-secondary)]">
+							<Link href="/member/register">지금 가입하기</Link>
+						</Button>
 					</CardFooter>
 				</Card>
 			</section>

@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { newsCategories, getNewsBySlug } from "@/lib/data/news";
+import { newsCategories, getNewsBySlug, newsItems } from "@/lib/data/news";
 
 type NewsDetailPageProps = {
 	params: {
@@ -93,4 +93,10 @@ export default function NewsDetailPage({ params }: NewsDetailPageProps) {
 			</section>
 		</div>
 	);
+}
+
+export function generateStaticParams() {
+	return newsItems.map((item) => ({
+		slug: item.slug,
+	}));
 }
