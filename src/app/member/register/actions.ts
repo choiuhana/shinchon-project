@@ -64,7 +64,8 @@ export async function registerAction(
 		`;
 	} catch (error) {
 		console.error("registerAction error", error);
-		const message = "회원가입 처리 중 문제가 발생했습니다. 잠시 후 다시 시도해 주세요.";
+		const message =
+			error instanceof Error ? error.message : "회원가입 처리 중 문제가 발생했습니다.";
 		return {
 			errors: {},
 			genericError: message,
