@@ -17,6 +17,7 @@ export async function registerAction(
 	prevState: RegisterFormState,
 	formData: FormData,
 ): Promise<RegisterFormState> {
+	const name = "";
 	const email = String(formData.get("email") ?? "").trim().toLowerCase();
 	const password = String(formData.get("password") ?? "");
 	const confirmPassword = String(formData.get("confirmPassword") ?? "");
@@ -59,8 +60,8 @@ export async function registerAction(
 		const passwordHash = hashPassword(password);
 
 		await sql`
-			INSERT INTO users (email, password_hash, role, status)
-			VALUES (${email}, ${passwordHash}, ${role}, ${status})
+			INSERT INTO users (name, email, password_hash, role, status)
+			VALUES (${name}, ${email}, ${passwordHash}, ${role}, ${status})
 		`;
 	} catch (error) {
 		console.error("registerAction error", error);
