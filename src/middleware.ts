@@ -9,24 +9,34 @@ export async function middleware(request: NextRequest) {
 	const cookieName = secureCookie ? "__Secure-authjs.session-token" : "authjs.session-token";
 	const salt = process.env.AUTH_SALT ?? process.env.NEXTAUTH_SALT ?? cookieName;
 
-	if (!secret) {
-		throw new Error("AUTH_SECRET (or NEXTAUTH_SECRET) 환경 변수가 설정되어 있지 않습니다.");
-	}
-
-	const token = await getToken({
-		req: request,
-		secret,
-		secureCookie,
-		cookieName,
-		salt,
-	});
-
-	const redirectToLogin = () => {
+	const redirectToLogin = (params: Record<string, string> = {}) => {
 		const url = new URL("/member/login", origin);
 		const redirect = searchParams.get("redirect") ?? pathname;
 		url.searchParams.set("redirect", redirect);
+		for (const [key, value] of Object.entries(params)) {
+			url.searchParams.set(key, value);
+		}
 		return NextResponse.redirect(url);
 	};
+
+	if (!secret) {
+		console.error("AUTH_SECRET (or NEXTAUTH_SECRET) is not configured. Middleware will force login.");
+		return redirectToLogin({ reason: "missing-secret" });
+	}
+
+	let token = null;
+	try {
+		token = await getToken({
+			req: request,
+			secret,
+			secureCookie,
+			cookieName,
+			salt,
+		});
+	} catch (error) {
+		console.error("Failed to read auth token in middleware", error);
+		return redirectToLogin({ reason: "token-error" });
+	}
 
 	if (pathname.startsWith("/admin")) {
 		if (!token) {
