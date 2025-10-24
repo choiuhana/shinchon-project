@@ -7,13 +7,14 @@ import { Button } from "@/components/ui/button";
 import { newsCategories, getNewsBySlug, newsItems } from "@/lib/data/news";
 
 type NewsDetailPageProps = {
-	params: {
+	params: Promise<{
 		slug: string;
-	};
+	}>;
 };
 
-export function generateMetadata({ params }: NewsDetailPageProps): Metadata {
-	const newsItem = getNewsBySlug(params.slug);
+export async function generateMetadata({ params }: NewsDetailPageProps): Promise<Metadata> {
+	const { slug } = await params;
+	const newsItem = getNewsBySlug(slug);
 
 	if (!newsItem) {
 		return {
@@ -27,8 +28,10 @@ export function generateMetadata({ params }: NewsDetailPageProps): Metadata {
 	};
 }
 
-export default function NewsDetailPage({ params }: NewsDetailPageProps) {
-	const newsItem = getNewsBySlug(params.slug);
+export default async function NewsDetailPage({ params }: NewsDetailPageProps) {
+	const { slug } = await params;
+
+	const newsItem = getNewsBySlug(slug);
 
 	if (!newsItem) {
 		notFound();

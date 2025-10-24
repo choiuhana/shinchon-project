@@ -100,9 +100,12 @@
 - `AGENT.md` (this file) — coordination reference and change log root.
 - `src/app/news` — 알림마당 목록/카테고리/상세 페이지 스캐폴딩과 데모 데이터 연동.
 - `src/lib/data/news.ts` — 공지/가정통신문/행사 카테고리 더미 데이터 및 헬퍼.
-- `src/app/parents/page.tsx`, `src/app/member/login/page.tsx` — Coming Soon 플레이스홀더 페이지.
+- `src/app/parents/page.tsx`, `src/app/member/login/page.tsx` — 부모 포털 안내 및 이메일 로그인 화면.
 - `src/app/member/register/page.tsx`, `src/app/member/register/actions.ts` — 회원가입 폼과 서버 액션.
 - `src/lib/auth/password.ts` — PBKDF2 기반 비밀번호 해시/검증 헬퍼.
+- `src/lib/auth/options.ts`, `src/lib/auth/index.ts` — NextAuth 설정과 helper(`auth`, `handlers`, `signIn` 등).
+- `src/app/api/auth/[...nextauth]/route.ts` — NextAuth Route Handler.
+- `middleware.ts` — 학부모/관리자 라우트 접근 제어 가드.
 - `drizzle.config.ts`, `src/db/schema.ts` — Drizzle 마이그레이션 설정과 스키마 정의.
 - `drizzle/` — 생성된 마이그레이션 SQL(`0000_dear_lockjaw.sql`)과 메타(`meta/`) 파일.
 
@@ -124,16 +127,16 @@
 
 ## Immediate Next Steps (Suggested)
 - Document shadcn/ui 테마 변수와 적용 원칙(브랜드 컬러, 폰트 등)을 명세에 반영.
-- Wire up NextAuth + `@vercel/postgres` 기반 데이터 계층을 연결하고 핵심 Server Action/Route Handler 인증 미들웨어 골격을 정의.
+- Finalize NextAuth 흐름(비밀번호 재설정, 승인 거절 처리, 세션 만료 정책)을 명세화.
 - Model Vercel DB(PostgreSQL) 스키마와 마이그레이션(회원/자녀/게시판/상담/알림 및 설정 테이블 포함) 설계를 착수.
 - Scaffold `/admin` 레이아웃과 접근 제어 미들웨어 골격.
 - Draft migration plan for legacy content, especially parent portal data and media.
 - Start PWA discovery: 대상 라우트, 매니페스트 요구 아이콘, 서비스 워커 캐싱 정책, 오프라인 시나리오를 정의해 3단계 투입을 준비.
 - Connect News section to `news_posts` 테이블 기반의 read API, 상세 페이지 SEO 메타 구조 확정.
-- Implement NextAuth 골격과 실제 로그인 흐름(`/member/login` UI 교체 포함), 승인/역할 가드를 부모 포털과 Admin에 연동.
 - Model `news_posts`/`news_attachments` 등 주요 테이블을 Drizzle 스키마로 확장하고 Admin CRUD Server Action 설계.
 - `/admin` 레이아웃 및 네비게이션, News/승인 관리 UI를 scaffolding하고 Server Action과 연결.
 - Drizzle 마이그레이션을 CI/배포 흐름에 포함시키고 `npm run db:generate`/`npm run db:push` 운용 절차를 문서화.
+- 부모 포털 `/parents` 초기 레이아웃과 승인 대기 안내 페이지 작성.
 
 ## History Log
 - 2025-10-22 — Initial AGENT.md created from v1.0 specification set; established shadcn/ui as mandatory UI layer and recorded legacy remediation items.
@@ -150,3 +153,4 @@
 - 2025-10-25 — 내부 Admin에서 News/공지 콘텐츠를 관리하는 전략과 NextAuth 승인 흐름 설계안을 작성하고 AGENT 가이드에 반영.
 - 2025-10-25 — 회원가입 폼과 서버 액션을 추가하고 PBKDF2 기반 비밀번호 해시 헬퍼를 도입.
 - 2025-10-25 — Drizzle ORM 기반 마이그레이션 체계를 도입하고 `schema.ts`, `drizzle.config.ts`, 마이그레이션 SQL을 추가.
+- 2025-10-25 — NextAuth Credentials 기반 로그인(`/member/login`), 인증 미들웨어, `/api/auth` 라우트를 구성하고 테스트.
