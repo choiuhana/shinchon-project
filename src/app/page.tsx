@@ -21,7 +21,7 @@ import {
 	CardTitle,
 } from "@/components/ui/card";
 import { newsCategories, type NewsPost } from "@/lib/data/news";
-import { getHighlightedNews } from "@/lib/data/news-repository";
+import { getHighlightedNews, getNewsList } from "@/lib/data/news-repository";
 
 const heroStats = [
 	{ label: "모집 연령", value: "만 3-5세" },
@@ -134,6 +134,8 @@ function resolveCategoryLabel(key: NewsPost["category"]) {
 
 export default async function Home() {
 	const highlightedNews = await getHighlightedNews(3);
+	const homepageNews =
+		highlightedNews.length > 0 ? highlightedNews : await getNewsList({ limit: 3 });
 	return (
 		<div className="bg-[var(--background)] text-[var(--brand-navy)]">
 			<section id="hero" className="relative isolate overflow-hidden">
@@ -364,12 +366,12 @@ export default async function Home() {
 				</header>
 
 				<div className="grid gap-6 md:grid-cols-3">
-					{highlightedNews.length === 0 ? (
+					{homepageNews.length === 0 ? (
 						<p className="py-12 text-center text-sm text-muted-foreground">
 							등록된 소식이 없습니다.
 						</p>
 					) : (
-						highlightedNews.map((item) => (
+						homepageNews.map((item) => (
 							<Card key={item.id} className="h-full border-[var(--border)]">
 							<CardHeader className="space-y-3">
 								<Badge variant="ghost" className="w-fit text-xs text-[var(--brand-secondary)]">
