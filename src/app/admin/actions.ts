@@ -152,6 +152,7 @@ export async function createNewsPostAction(_: FormState, formData: FormData): Pr
 	}
 
 	const data = parsed.data;
+	const publishAtValue = data.publishAt ? data.publishAt.toISOString() : null;
 
 	const slug = data.slug ? slugify(data.slug) : slugify(data.title);
 	const contentJson = markdownToParagraphs(data.contentMarkdown);
@@ -178,7 +179,7 @@ export async function createNewsPostAction(_: FormState, formData: FormData): Pr
 				${contentJson},
 				${data.heroImageUrl ?? null},
 				${data.heroImageAlt ?? null},
-				${data.publishAt ?? null},
+				${publishAtValue},
 				${data.isHighlighted},
 				${data.audienceScope},
 				${session.user?.id ?? null}

@@ -119,9 +119,9 @@ export default async function ParentsDashboardPage() {
 													))}
 											</ul>
 										) : null}
-										<Button variant="link" className="px-0 text-[var(--brand-primary)]" asChild>
-											<Link href="/parents/posts">자세히 보기</Link>
-										</Button>
+                                     <Button variant="link" className="px-0 text-[var(--brand-primary)]" asChild>
+                                         <Link href={`/parents/posts/${post.id}`}>자세히 보기</Link>
+                                     </Button>
 									</CardContent>
 								</Card>
 							))}

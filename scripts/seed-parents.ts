@@ -148,6 +148,47 @@ const [admin] = (await db`SELECT id FROM users WHERE email = 'admin@playwright.t
 		}
 	}
 
+	const scheduleSeeds = [
+		{
+			title: "11월 방문 수업",
+			description: "보호자 초청 공개수업",
+			classroomId: petitId,
+			startDate: new Date(Date.UTC(2025, 10, 14, 1, 0)),
+			endDate: new Date(Date.UTC(2025, 10, 14, 3, 0)),
+			location: "Petit A 교실",
+		},
+		{
+			title: "정기 운영위원회",
+			description: "11월 운영위원회 정기 회의",
+			classroomId: null,
+			startDate: new Date(Date.UTC(2025, 10, 20, 2, 0)),
+			endDate: new Date(Date.UTC(2025, 10, 20, 3, 0)),
+			location: "본관 2층 회의실",
+		},
+	];
+
+	for (const schedule of scheduleSeeds) {
+		const existingSchedule = await db`
+			SELECT id FROM class_schedules WHERE title = ${schedule.title} AND start_date = ${schedule.startDate.toISOString()}
+		`;
+		if (existingSchedule.rows.length > 0) {
+			await db`
+				UPDATE class_schedules
+				SET description = ${schedule.description ?? null},
+					classroom_id = ${schedule.classroomId ?? null},
+					end_date = ${schedule.endDate?.toISOString() ?? null},
+					location = ${schedule.location ?? null},
+					updated_at = now()
+				WHERE id = ${existingSchedule.rows[0].id}
+			`;
+		} else {
+			await db`
+				INSERT INTO class_schedules (classroom_id, title, description, start_date, end_date, location)
+				VALUES (${schedule.classroomId ?? null}, ${schedule.title}, ${schedule.description ?? null}, ${schedule.startDate.toISOString()}, ${schedule.endDate?.toISOString() ?? null}, ${schedule.location ?? null})
+			`;
+		}
+	}
+
 	console.log("✅ Parent seed complete");
 }
 

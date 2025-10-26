@@ -3,7 +3,6 @@
 import "@toast-ui/editor/dist/toastui-editor.css";
 
 import { Editor } from "@toast-ui/react-editor";
-import type { Editor as EditorCore } from "@toast-ui/editor";
 import { useEffect, useRef, useState } from "react";
 
 const toolbarItems: [string, string][] = [
@@ -22,8 +21,10 @@ type RichTextEditorProps = {
 	resetKey?: number;
 };
 
+type EditorCoreInstance = ReturnType<InstanceType<typeof Editor>["getInstance"]>;
+
 export function RichTextEditor({ name, initialValue = "", resetKey }: RichTextEditorProps) {
-	const editorRef = useRef<EditorCore | null>(null);
+	const editorRef = useRef<EditorCoreInstance | null>(null);
 	const [value, setValue] = useState(initialValue);
 
 	useEffect(() => {

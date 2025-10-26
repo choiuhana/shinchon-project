@@ -85,3 +85,16 @@ export const classPostAttachments = pgTable("class_post_attachments", {
 	label: text("label"),
 	createdAt: timestamp("created_at").notNull().defaultNow(),
 });
+
+export const classSchedules = pgTable("class_schedules", {
+	id: uuid("id").primaryKey().defaultRandom(),
+	classroomId: uuid("classroom_id").references(() => classrooms.id, { onDelete: "set null" }),
+	title: text("title").notNull(),
+	description: text("description"),
+	startDate: timestamp("start_date").notNull(),
+	endDate: timestamp("end_date"),
+	location: text("location"),
+	audienceScope: text("audience_scope").notNull().default("parents"),
+	createdAt: timestamp("created_at").notNull().defaultNow(),
+	updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});

@@ -193,6 +193,9 @@ export default async function AdminDashboardPage({ searchParams }: AdminPageProp
 							미리보기가 자동으로 갱신됩니다.
 						</p>
 					</div>
+					<Button variant="outline" className="w-full sm:w-auto" asChild>
+						<Link href="/admin/class-posts">반 소식 관리로 이동</Link>
+					</Button>
 				</header>
 
 				<CreatePostForm categories={newsCategories} />

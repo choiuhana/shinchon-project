@@ -169,7 +169,7 @@ async function upsertPost(entry: LegacyEntry, category: "announcements" | "newsl
 			${content},
 			${heroImageUrl},
 			null,
-			${publishAt},
+			${publishAt.toISOString()},
 			false,
 			${category === "newsletter" ? "parents" : "public"},
 			null
