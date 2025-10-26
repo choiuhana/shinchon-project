@@ -1,49 +1,91 @@
 "use client";
 
-import { startTransition, useActionState, useEffect, useRef, useState } from "react";
+import { startTransition, useActionState, useEffect, useMemo, useRef, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import type { NewsCategory } from "@/lib/data/news";
 
-import { createNewsPostAction } from "../actions";
+import { createNewsPostAction, updateNewsPostAction } from "../actions";
 import { initialFormState, type FormState } from "../form-state";
 import { RichTextEditor } from "./rich-text-editor";
 
-type CreatePostFormProps = {
+type NewsPostFormValues = {
+	postId?: string;
+	title?: string;
+	category?: string;
+	summary?: string | null;
+	contentMarkdown?: string;
+	publishAt?: string | null;
+	heroImageUrl?: string | null;
+	heroImageAlt?: string | null;
+	isHighlighted?: boolean;
+	audienceScope?: string;
+	slug?: string | null;
+	attachments?: { label?: string | null; url?: string | null }[];
+};
+
+type NewsPostFormProps = {
 	categories: NewsCategory[];
+	mode: "create" | "edit";
+	initialValues?: NewsPostFormValues;
 };
 
 const MAX_ATTACHMENTS = 3;
 
-export function CreatePostForm({ categories }: CreatePostFormProps) {
-	const [formState, formAction, pending] = useActionState<FormState, FormData>(
-		createNewsPostAction,
-		initialFormState,
-	);
+function toDateTimeLocal(date?: string | Date | null) {
+	if (!date) return "";
+	const d = typeof date === "string" ? new Date(date) : date;
+	if (Number.isNaN(d.getTime())) return "";
+	const pad = (num: number) => String(num).padStart(2, "0");
+	return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(
+		d.getMinutes(),
+	)}`;
+}
+
+function getDefaultAttachments(initial?: { label?: string | null; url?: string | null }[]) {
+	const values = initial ?? [];
+	return Array.from({ length: MAX_ATTACHMENTS }).map((_, index) => values[index] ?? { label: "", url: "" });
+}
+
+function NewsPostForm({ categories, mode, initialValues }: NewsPostFormProps) {
+	const serverAction = mode === "create" ? createNewsPostAction : updateNewsPostAction;
+	const [formState, formAction, pending] = useActionState<FormState, FormData>(serverAction, initialFormState);
 	const formRef = useRef<HTMLFormElement>(null);
-	const [showAdvanced, setShowAdvanced] = useState(false);
 	const [editorResetKey, setEditorResetKey] = useState(0);
+	const [showAdvanced, setShowAdvanced] = useState(
+		Boolean(
+			initialValues?.slug ||
+				initialValues?.attachments?.some((attachment) => (attachment?.label ?? attachment?.url ?? "") !== ""),
+		),
+	);
+
+	const attachments = useMemo(() => getDefaultAttachments(initialValues?.attachments), [initialValues?.attachments]);
+	const initialContent = initialValues?.contentMarkdown ?? "";
 
 	useEffect(() => {
-		if (formState.status === "success") {
+		if (formState.status === "success" && mode === "create") {
 			formRef.current?.reset();
 			startTransition(() => {
 				setShowAdvanced(false);
 				setEditorResetKey((key) => key + 1);
 			});
 		}
-	}, [formState.status]);
+	}, [formState.status, mode]);
+
+	const heading = mode === "create" ? "게시글 작성" : "게시글 수정";
+	const description =
+		mode === "create"
+			? "공지, 가정통신문, 행사 페이지에 노출될 콘텐츠를 등록합니다. 본문은 단락마다 줄바꿈으로 나누어 주세요."
+			: "기존 게시글의 내용을 수정합니다. 저장 시 뉴스/홈 캐시가 갱신됩니다.";
+	const submitLabel = mode === "create" ? "게시글 등록" : "변경 사항 저장";
 
 	return (
 		<section className="rounded-[var(--radius-lg)] border border-[var(--border)] bg-white/90 p-6 shadow-[var(--shadow-soft)]">
 			<div className="flex flex-col gap-2">
-				<h2 className="text-xl font-semibold text-[var(--brand-navy)]">게시글 작성</h2>
-				<p className="text-sm text-muted-foreground">
-					공지, 가정통신문, 행사 페이지에 노출될 콘텐츠를 등록합니다. 본문은 단락마다 줄바꿈으로
-					나누어 주세요.
-				</p>
+				<h2 className="text-xl font-semibold text-[var(--brand-navy)]">{heading}</h2>
+				<p className="text-sm text-muted-foreground">{description}</p>
 			</div>
 
 			<form
@@ -51,10 +93,17 @@ export function CreatePostForm({ categories }: CreatePostFormProps) {
 				action={formAction}
 				className="mt-6 grid gap-6 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]"
 			>
+				{mode === "edit" && initialValues?.postId ? <input type="hidden" name="postId" value={initialValues.postId} /> : null}
 				<div className="grid gap-4">
 					<div className="grid gap-2">
 						<Label htmlFor="title">제목</Label>
-						<Input id="title" name="title" placeholder="예) 2026학년도 입학설명회 안내" required />
+						<Input
+							id="title"
+							name="title"
+							defaultValue={initialValues?.title ?? ""}
+							placeholder="예) 2026학년도 입학설명회 안내"
+							required
+						/>
 					</div>
 
 					<div className="grid gap-2">
@@ -62,7 +111,7 @@ export function CreatePostForm({ categories }: CreatePostFormProps) {
 						<select
 							id="category"
 							name="category"
-							defaultValue={categories[0]?.key}
+							defaultValue={initialValues?.category ?? categories[0]?.key}
 							className="h-11 rounded-[var(--radius-sm)] border border-[var(--border)] bg-white px-3 text-sm text-[var(--brand-navy)]"
 						>
 							{categories.map((category) => (
@@ -78,13 +127,18 @@ export function CreatePostForm({ categories }: CreatePostFormProps) {
 						<Input
 							id="summary"
 							name="summary"
+							defaultValue={initialValues?.summary ?? ""}
 							placeholder="요약 문장을 입력하세요."
 						/>
 					</div>
 
 					<div className="grid gap-2">
 						<Label htmlFor="contentMarkdown">본문</Label>
-						<RichTextEditor name="contentMarkdown" initialValue="" resetKey={editorResetKey} />
+						<RichTextEditor
+							name="contentMarkdown"
+							initialValue={initialContent}
+							resetKey={mode === "create" ? editorResetKey : undefined}
+						/>
 						<p className="text-xs text-muted-foreground">
 							툴바를 사용해 제목, 굵게, 인용, 리스트 등을 입력할 수 있습니다.
 						</p>
@@ -98,6 +152,7 @@ export function CreatePostForm({ categories }: CreatePostFormProps) {
 							id="publishAt"
 							name="publishAt"
 							type="datetime-local"
+							defaultValue={toDateTimeLocal(initialValues?.publishAt ?? null)}
 							className="h-11 w-full rounded-[var(--radius-sm)] border border-[var(--border)] bg-white px-3 text-sm text-[var(--brand-navy)]"
 						/>
 						<p className="text-xs text-muted-foreground">
@@ -110,6 +165,7 @@ export function CreatePostForm({ categories }: CreatePostFormProps) {
 						<Input
 							id="heroImageUrl"
 							name="heroImageUrl"
+							defaultValue={initialValues?.heroImageUrl ?? ""}
 							placeholder="https://..."
 						/>
 					</div>
@@ -119,6 +175,7 @@ export function CreatePostForm({ categories }: CreatePostFormProps) {
 						<Input
 							id="heroImageAlt"
 							name="heroImageAlt"
+							defaultValue={initialValues?.heroImageAlt ?? ""}
 							placeholder="이미지 대체 텍스트를 입력하세요."
 						/>
 					</div>
@@ -129,6 +186,7 @@ export function CreatePostForm({ categories }: CreatePostFormProps) {
 							id="isHighlighted"
 							name="isHighlighted"
 							className="size-4 rounded border border-[var(--border)] accent-[var(--brand-primary)]"
+							defaultChecked={initialValues?.isHighlighted ?? false}
 						/>
 						<Label htmlFor="isHighlighted" className="text-sm font-medium text-[var(--brand-navy)]">
 							홈 미리보기로 노출
@@ -140,7 +198,7 @@ export function CreatePostForm({ categories }: CreatePostFormProps) {
 						<select
 							id="audienceScope"
 							name="audienceScope"
-							defaultValue="public"
+							defaultValue={initialValues?.audienceScope ?? "public"}
 							className="h-11 rounded-[var(--radius-sm)] border border-[var(--border)] bg-white px-3 text-sm text-[var(--brand-navy)]"
 						>
 							<option value="public">전체 공개</option>
@@ -163,6 +221,7 @@ export function CreatePostForm({ categories }: CreatePostFormProps) {
 								<Input
 									id="slug"
 									name="slug"
+									defaultValue={initialValues?.slug ?? ""}
 									placeholder="미입력 시 제목을 기반으로 자동 생성"
 								/>
 							</div>
@@ -170,7 +229,7 @@ export function CreatePostForm({ categories }: CreatePostFormProps) {
 							<div className="grid gap-2">
 								<span className="text-sm font-medium text-[var(--brand-navy)]">첨부 자료 (최대 {MAX_ATTACHMENTS}개)</span>
 								<div className="grid gap-3">
-									{Array.from({ length: MAX_ATTACHMENTS }).map((_, index) => (
+									{attachments.map((attachment, index) => (
 										<div
 											key={index}
 											className="grid gap-2 rounded-[var(--radius-sm)] border border-[var(--border)] bg-[rgba(248,247,255,0.6)] p-3"
@@ -182,6 +241,7 @@ export function CreatePostForm({ categories }: CreatePostFormProps) {
 												<Input
 													id={`attachmentLabel-${index}`}
 													name="attachmentLabel"
+													defaultValue={attachment.label ?? ""}
 													placeholder="예) 안내문 PDF"
 												/>
 											</div>
@@ -192,6 +252,7 @@ export function CreatePostForm({ categories }: CreatePostFormProps) {
 												<Input
 													id={`attachmentUrl-${index}`}
 													name="attachmentUrl"
+													defaultValue={attachment.url ?? ""}
 													placeholder="https://..."
 												/>
 											</div>
@@ -225,10 +286,12 @@ export function CreatePostForm({ categories }: CreatePostFormProps) {
 
 					<div className="flex flex-wrap items-center gap-3">
 						<Button type="submit" disabled={pending}>
-							{pending ? "등록 중..." : "게시글 등록"}
+							{pending ? "진행 중..." : submitLabel}
 						</Button>
 						<span className="text-xs text-muted-foreground">
-							등록 후 `/news`, `/` 페이지의 캐시가 자동으로 갱신됩니다.
+							{mode === "create"
+								? "등록 후 `/news`, `/` 페이지의 캐시가 자동으로 갱신됩니다."
+								: "저장 후 `/news`, `/` 페이지의 캐시가 자동으로 갱신됩니다."}
 						</span>
 					</div>
 				</div>
@@ -236,3 +299,19 @@ export function CreatePostForm({ categories }: CreatePostFormProps) {
 		</section>
 	);
 }
+
+export function CreatePostForm({ categories }: { categories: NewsCategory[] }) {
+	return <NewsPostForm categories={categories} mode="create" />;
+}
+
+export function EditPostForm({
+	categories,
+	initialValues,
+}: {
+	categories: NewsCategory[];
+	initialValues: NewsPostFormValues;
+}) {
+	return <NewsPostForm categories={categories} mode="edit" initialValues={initialValues} />;
+}
+
+export type { NewsPostFormValues };

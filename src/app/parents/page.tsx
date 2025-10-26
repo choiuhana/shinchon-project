@@ -128,6 +128,41 @@ export default async function ParentsDashboardPage() {
 						</div>
 					)}
 				</div>
+
+				<div className="space-y-4">
+					<h2 className="font-heading text-xl">빠른 바로가기</h2>
+					<div className="grid gap-4 md:grid-cols-3">
+						{[
+							{
+								title: "서식 자료실",
+								description: "출결·건강 서류를 내려받고 바로 제출하세요.",
+								href: "/parents/resources",
+							},
+							{
+								title: "운영위원회 자료",
+								description: "회의록과 예·결산 보고서를 투명하게 공개합니다.",
+								href: "/parents/resources?section=committee",
+							},
+							{
+								title: "1:1 문의",
+								description: "운영/생활 문의를 남기면 담당자가 답변드립니다.",
+								href: "/parents/inquiries",
+							},
+						].map((item) => (
+							<Card key={item.title} className="border-[var(--border)] bg-white/85">
+								<CardHeader className="space-y-2">
+									<CardTitle className="text-lg">{item.title}</CardTitle>
+									<CardDescription className="text-sm text-muted-foreground">{item.description}</CardDescription>
+								</CardHeader>
+								<CardContent>
+									<Button variant="link" className="px-0 text-[var(--brand-primary)]" asChild>
+										<Link href={item.href}>바로가기</Link>
+									</Button>
+								</CardContent>
+							</Card>
+						))}
+					</div>
+				</div>
 			</section>
 		</div>
 	);

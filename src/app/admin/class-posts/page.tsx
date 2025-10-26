@@ -73,6 +73,9 @@ export default async function AdminClassPostsPage() {
 														미리보기
 													</Link>
 												</Button>
+												<Button variant="outline" size="sm" asChild>
+													<Link href={`/admin/class-posts/${post.id}/edit`}>수정</Link>
+												</Button>
 												<DeleteClassPostButton postId={post.id} />
 											</div>
 										</TableCell>

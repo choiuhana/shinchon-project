@@ -98,3 +98,31 @@ export const classSchedules = pgTable("class_schedules", {
 	createdAt: timestamp("created_at").notNull().defaultNow(),
 	updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
+
+export const parentResources = pgTable("parent_resources", {
+	id: uuid("id").primaryKey().defaultRandom(),
+	title: text("title").notNull(),
+	description: text("description"),
+	category: text("category"),
+	resourceType: text("resource_type").notNull().default("form"),
+	fileUrl: text("file_url").notNull(),
+	publishedAt: timestamp("published_at"),
+	audienceScope: text("audience_scope").notNull().default("parents"),
+	createdAt: timestamp("created_at").notNull().defaultNow(),
+	updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
+export const parentInquiries = pgTable("parent_inquiries", {
+	id: uuid("id").primaryKey().defaultRandom(),
+	parentId: uuid("parent_id")
+		.references(() => users.id, { onDelete: "cascade" })
+		.notNull(),
+	category: text("category").notNull().default("general"),
+	subject: text("subject").notNull(),
+	message: text("message").notNull(),
+	status: text("status").notNull().default("received"),
+	adminReply: text("admin_reply"),
+	repliedAt: timestamp("replied_at"),
+	createdAt: timestamp("created_at").notNull().defaultNow(),
+	updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});

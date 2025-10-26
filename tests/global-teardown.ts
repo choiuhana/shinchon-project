@@ -16,6 +16,10 @@ export default async function globalTeardown() {
 
 	for (const email of TEST_EMAILS) {
 		await sql`
+			DELETE FROM parent_inquiries
+			WHERE parent_id = (SELECT id FROM users WHERE email = ${email})
+		`;
+		await sql`
 			DELETE FROM users WHERE email = ${email}
 		`;
 	}

@@ -189,3 +189,80 @@ export async function deleteClassPostAction(_: FormState, formData: FormData): P
 
 export { initialFormState };
 export type { FormState };
+
+export async function updateClassPostAction(_: FormState, formData: FormData): Promise<FormState> {
+	const session = await auth();
+	if (!session || session.user?.role !== "admin") {
+		return {
+			status: "error",
+			message: "관리자 권한이 필요합니다.",
+		};
+	}
+
+	const postId = formData.get("postId")?.toString();
+	if (!postId) {
+		return {
+			status: "error",
+			message: "수정할 게시글을 찾을 수 없습니다.",
+		};
+	}
+
+	const parsed = createClassPostSchema.safeParse(mapFormData(formData));
+	if (!parsed.success) {
+		return {
+			status: "error",
+			message: "입력값을 확인해 주세요.",
+			issues: parsed.error.issues.map((issue) => issue.message),
+		};
+	}
+
+	const data = parsed.data;
+	const publishAtValue = data.publishAt ? data.publishAt.toISOString() : null;
+
+	try {
+		const content = markdownToParagraphs(data.contentMarkdown);
+
+		const updated = await db`
+			UPDATE class_posts
+			SET
+				classroom_id = ${data.classroomId},
+				title = ${data.title},
+				summary = ${data.summary ?? null},
+				content = ${content},
+				publish_at = ${publishAtValue},
+				updated_at = now()
+			WHERE id = ${postId}
+			RETURNING id
+		`;
+
+		if (!updated.rows.length) {
+			return { status: "error", message: "게시글을 찾을 수 없습니다." };
+		}
+
+		await db`DELETE FROM class_post_attachments WHERE post_id = ${postId}`;
+
+		const attachments = data.attachments.filter((attachment) => attachment.url);
+
+		for (const attachment of attachments) {
+			await db`
+				INSERT INTO class_post_attachments (post_id, file_url, label)
+				VALUES (${postId}, ${attachment.url}, ${attachment.label ?? null})
+			`;
+		}
+
+		revalidatePath("/admin/class-posts");
+		revalidatePath("/parents");
+		revalidatePath("/parents/posts");
+
+		return {
+			status: "success",
+			message: "반 소식이 수정되었습니다.",
+		};
+	} catch (error) {
+		console.error("[updateClassPostAction]", error);
+		return {
+			status: "error",
+			message: "게시글 수정 중 문제가 발생했습니다.",
+		};
+	}
+}

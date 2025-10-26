@@ -77,4 +77,58 @@ test.describe("인증·권한 경로", () => {
 		await expect(page.getByRole("heading", { name: "게시글 작성" })).toBeVisible();
 		await expect(page.getByText("등록된 게시글")).toBeVisible();
 	});
+
+	test("관리자 계정은 /admin/parent-resources 페이지에 접근 가능", async ({ page }) => {
+		await loginAs(page, {
+			email: "admin@playwright.test",
+			password: "Admin123!",
+			redirect: "/admin/parent-resources",
+		});
+
+		await expect(page.getByRole("heading", { name: "서식 · 운영위원회 자료" })).toBeVisible();
+		await expect(page.getByRole("heading", { name: "새 자료 등록" })).toBeVisible();
+	});
+
+	test("관리자 계정은 /admin/parent-inquiries 페이지에 접근 가능", async ({ page }) => {
+		await loginAs(page, {
+			email: "admin@playwright.test",
+			password: "Admin123!",
+			redirect: "/admin/parent-inquiries",
+		});
+
+		await expect(page.getByRole("heading", { name: "1:1 문의 관리" })).toBeVisible();
+		await expect(page.getByText("학부모 문의 현황을 확인하고 상태/답변을 실시간으로 업데이트합니다.")).toBeVisible();
+	});
+
+	test("학부모 계정은 /parents/resources 자료실을 확인할 수 있다", async ({ page }) => {
+		await loginAs(page, {
+			email: "parent-active@playwright.test",
+			password: "Parent123!",
+			redirect: "/parents/resources",
+		});
+
+		await expect(page.getByRole("heading", { name: "서식 및 운영위원회 자료", exact: true })).toBeVisible();
+		await expect(page.getByRole("heading", { name: "서식 자료실", exact: true })).toBeVisible();
+		await expect(page.getByRole("heading", { name: "운영위원회 자료", exact: true })).toBeVisible();
+	});
+
+	test("학부모 계정은 /parents/inquiries 에서 문의를 등록할 수 있다", async ({ page }) => {
+		await loginAs(page, {
+			email: "parent-active@playwright.test",
+			password: "Parent123!",
+			redirect: "/parents/inquiries",
+		});
+
+		await expect(page.getByRole("heading", { name: "1:1 문의" })).toBeVisible();
+
+		const uniqueSubject = `Playwright 문의 ${Date.now()}`;
+
+		await page.getByLabel("문의 유형").selectOption("document");
+		await page.getByLabel("제목").fill(uniqueSubject);
+		await page.getByLabel("내용").fill("Playwright 테스트에서 자동으로 전송한 문의입니다.");
+
+		await page.getByRole("button", { name: "문의 보내기" }).click();
+		await expect(page.getByText("문의가 접수되었습니다.")).toBeVisible();
+		await expect(page.getByText(uniqueSubject).first()).toBeVisible();
+	});
 });

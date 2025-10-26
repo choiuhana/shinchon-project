@@ -193,9 +193,17 @@ export default async function AdminDashboardPage({ searchParams }: AdminPageProp
 							미리보기가 자동으로 갱신됩니다.
 						</p>
 					</div>
-					<Button variant="outline" className="w-full sm:w-auto" asChild>
-						<Link href="/admin/class-posts">반 소식 관리로 이동</Link>
-					</Button>
+					<div className="flex flex-wrap gap-3">
+						<Button variant="outline" className="w-full sm:w-auto" asChild>
+							<Link href="/admin/class-posts">반 소식 관리</Link>
+						</Button>
+						<Button variant="outline" className="w-full sm:w-auto" asChild>
+							<Link href="/admin/parent-resources">서식/운영위 자료</Link>
+						</Button>
+						<Button variant="outline" className="w-full sm:w-auto" asChild>
+							<Link href="/admin/parent-inquiries">1:1 문의 관리</Link>
+						</Button>
+					</div>
 				</header>
 
 				<CreatePostForm categories={newsCategories} />
@@ -309,6 +317,9 @@ export default async function AdminDashboardPage({ searchParams }: AdminPageProp
 													<Link href={`/news/${post.slug}`} target="_blank">
 														미리보기
 													</Link>
+												</Button>
+												<Button variant="outline" size="sm" asChild>
+													<Link href={`/admin/news/${post.id}/edit`}>수정</Link>
 												</Button>
 												<DeletePostButton postId={post.id} />
 											</div>

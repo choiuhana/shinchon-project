@@ -189,6 +189,72 @@ const [admin] = (await db`SELECT id FROM users WHERE email = 'admin@playwright.t
 		}
 	}
 
+	const resourceSeeds = [
+		{
+			title: "외출·조퇴 신청서",
+			description: "아이의 외출 또는 조퇴가 필요할 때 제출하는 기본 양식",
+			category: "행정/생활",
+			resourceType: "form",
+			fileUrl: "https://www.shinchonkid.com/web/upload/forms/early-dismissal.pdf",
+			publishedAt: new Date(Date.UTC(2025, 8, 1)),
+		},
+		{
+			title: "약 복용 의뢰서",
+			description: "투약이 필요한 경우 교사에게 전달하는 의뢰서",
+			category: "건강",
+			resourceType: "form",
+			fileUrl: "https://www.shinchonkid.com/web/upload/forms/medicine-consent.pdf",
+			publishedAt: new Date(Date.UTC(2025, 7, 20)),
+		},
+		{
+			title: "교외 체험학습 사전동의서",
+			description: "학부모 주관 체험학습 신청 시 제출",
+			category: "체험학습",
+			resourceType: "form",
+			fileUrl: "https://www.shinchonkid.com/web/upload/forms/fieldtrip-consent.pdf",
+			publishedAt: new Date(Date.UTC(2025, 8, 15)),
+		},
+		{
+			title: "2025년 2분기 운영위원회 회의록",
+			description: "7월 정기회의 안건 및 의결 사항",
+			category: "운영위원회",
+			resourceType: "committee",
+			fileUrl: "https://www.shinchonkid.com/web/upload/committee/2025-q2-minutes.pdf",
+			publishedAt: new Date(Date.UTC(2025, 6, 10)),
+		},
+		{
+			title: "2025년 계획된 예·결산 보고서",
+			description: "운영위원회 공유용 재정 현황 보고",
+			category: "운영위원회",
+			resourceType: "committee",
+			fileUrl: "https://www.shinchonkid.com/web/upload/committee/2025-budget-review.pdf",
+			publishedAt: new Date(Date.UTC(2025, 5, 28)),
+		},
+	];
+
+	for (const resource of resourceSeeds) {
+		const existingResource = await db`
+			SELECT id FROM parent_resources WHERE title = ${resource.title} AND resource_type = ${resource.resourceType}
+		`;
+
+		if (existingResource.rows.length > 0) {
+			await db`
+				UPDATE parent_resources
+				SET description = ${resource.description ?? null},
+					category = ${resource.category ?? null},
+					file_url = ${resource.fileUrl},
+					published_at = ${resource.publishedAt?.toISOString() ?? null},
+					updated_at = now()
+				WHERE id = ${existingResource.rows[0].id}
+			`;
+		} else {
+			await db`
+				INSERT INTO parent_resources (title, description, category, resource_type, file_url, published_at)
+				VALUES (${resource.title}, ${resource.description ?? null}, ${resource.category ?? null}, ${resource.resourceType}, ${resource.fileUrl}, ${resource.publishedAt?.toISOString() ?? null})
+			`;
+		}
+	}
+
 	console.log("✅ Parent seed complete");
 }
 

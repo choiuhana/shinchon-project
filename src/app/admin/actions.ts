@@ -221,6 +221,94 @@ export async function createNewsPostAction(_: FormState, formData: FormData): Pr
 	}
 }
 
+export async function updateNewsPostAction(_: FormState, formData: FormData): Promise<FormState> {
+	const session = await auth();
+	if (!session || session.user?.role !== "admin") {
+		return {
+			status: "error",
+			message: "관리자 권한이 필요합니다.",
+		};
+	}
+
+	const postId = formData.get("postId")?.toString();
+	if (!postId) {
+		return {
+			status: "error",
+			message: "수정할 게시글을 찾을 수 없습니다.",
+		};
+	}
+
+	const parsed = createPostSchema.safeParse(mapFormData(formData));
+
+	if (!parsed.success) {
+		return {
+			status: "error",
+			message: "입력값을 확인해 주세요.",
+			issues: parsed.error.issues.map((issue) => issue.message),
+		};
+	}
+
+	const data = parsed.data;
+	const publishAtValue = data.publishAt ? data.publishAt.toISOString() : null;
+	const slug = data.slug ? slugify(data.slug) : slugify(data.title);
+	const contentJson = markdownToParagraphs(data.contentMarkdown);
+
+	try {
+		const updated = await db`
+			UPDATE news_posts
+			SET
+				slug = ${slug},
+				title = ${data.title},
+				category = ${data.category},
+				summary = ${data.summary ?? null},
+				content = ${contentJson},
+				hero_image_url = ${data.heroImageUrl ?? null},
+				hero_image_alt = ${data.heroImageAlt ?? null},
+				publish_at = ${publishAtValue},
+				is_highlighted = ${data.isHighlighted},
+				audience_scope = ${data.audienceScope},
+				updated_at = now()
+			WHERE id = ${postId}
+			RETURNING id
+		`;
+
+		if (!updated.rows.length) {
+			return {
+				status: "error",
+				message: "게시글을 찾을 수 없습니다.",
+			};
+		}
+
+		await db`DELETE FROM news_attachments WHERE post_id = ${postId}`;
+
+		const validAttachments = data.attachments.filter(
+			(attachment) => attachment.url && attachment.url.trim().length > 0,
+		);
+
+		for (const attachment of validAttachments) {
+			await db`
+				INSERT INTO news_attachments (post_id, file_url, label)
+				VALUES (${postId}, ${attachment.url}, ${attachment.label ?? null})
+			`;
+		}
+
+		revalidatePath("/admin");
+		revalidatePath("/news");
+		revalidatePath("/");
+
+		return {
+			status: "success",
+			message: "게시글이 수정되었습니다.",
+		};
+	} catch (error) {
+		console.error("[updateNewsPostAction]", error);
+		return {
+			status: "error",
+			message: "게시글 수정 중 오류가 발생했습니다.",
+		};
+	}
+}
+
 export async function deleteNewsPostAction(_: FormState, formData: FormData): Promise<FormState> {
 	const session = await auth();
 	if (!session || session.user?.role !== "admin") {
