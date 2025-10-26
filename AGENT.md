@@ -154,3 +154,98 @@
 - 2025-10-25 — 회원가입 폼과 서버 액션을 추가하고 PBKDF2 기반 비밀번호 해시 헬퍼를 도입.
 - 2025-10-25 — Drizzle ORM 기반 마이그레이션 체계를 도입하고 `schema.ts`, `drizzle.config.ts`, 마이그레이션 SQL을 추가.
 - 2025-10-25 — NextAuth Credentials 기반 로그인(`/member/login`), 인증 미들웨어, `/api/auth` 라우트를 구성하고 테스트.
+- 2025-10-26 — https://www.shinchonkid.com 공개 게시판에서 공지/가정통신문/월별 행사를 수집해 초기 마이그레이션 자료로 정리하고, `/admin` 콘솔(Server Action + Vercel Postgres)을 구축하여 게시글 등록·목록·삭제 기능 및 5분 글로벌 타임아웃(Playwright)을 추가함.
+- 2025-10-27 — (`news_posts`, `news_attachments`) 데이터와 `/news` 페이지 전체가 DB 연동으로 교체되었고, 홈 뉴스 하이라이트 역시 DB 데이터를 사용하도록 업데이트. 관리자 콘솔에는 Toast UI Editor 기반 본문 작성 기능 및 첨부 URL 관리가 추가됨.
+- 2025-10-27 — 학부모 포털 1단계: `classrooms`/`children` 등 Drizzle 스키마 확장, seed 스크립트(`db:seed:parents`) 작성, `/parents` 대시보드에서 자녀/반 소식이 실제 DB 데이터로 렌더링되도록 구현.
+  ```json
+  {
+    "notice": [
+      {
+        "title": "2026학년도 신촌유치원 입학설명회",
+        "url": "https://www.shinchonkid.com/web/customer/notice_view.html?no=184",
+        "textSnippet": "2026학년도 신촌유치원 입학설명회를 다음과 같이 개최합니다. 아래 입학설명회 포스터에 있는 QR코드 또는 네이버폼 링크 https://naver.me/5tfNnVEf 를 통해 신청해주세요^^",
+        "images": [
+          "http://www.shinchonkid.com/web/upload/1759389487_344067.jpg"
+        ]
+      },
+      {
+        "title": "2024학년도 신촌유치원 결산서",
+        "url": "https://www.shinchonkid.com/web/customer/notice_view.html?no=182",
+        "textSnippet": "2024학년도 신촌유치원 결산서를 붙임과 같이 공개합니다.",
+        "images": []
+      },
+      {
+        "title": "2025년 4월 식단",
+        "url": "https://www.shinchonkid.com/web/customer/notice_view.html?no=181",
+        "textSnippet": "",
+        "images": [
+          "http://www.shinchonkid.com/web/upload/1743580441_931293.jpg",
+          "http://www.shinchonkid.com/web/upload/1743580451_735374.jpg"
+        ]
+      },
+      {
+        "title": "2024학년도 하반기 급식비 중 식품비 사용 비율",
+        "url": "https://www.shinchonkid.com/web/customer/notice_view.html?no=180",
+        "textSnippet": "2024학년도 하반기 급식비 중 식품비 사용 비율입니다.",
+        "images": []
+      },
+      {
+        "title": "2024 유치원 자체평가 결과 보고서",
+        "url": "https://www.shinchonkid.com/web/customer/notice_view.html?no=179",
+        "textSnippet": "",
+        "images": [
+          "http://www.shinchonkid.com/web/upload/1742888084_096720.jpg",
+          "http://www.shinchonkid.com/web/upload/1742888182_895500.jpg"
+        ]
+      }
+    ],
+    "correspondence": [
+      {
+        "title": "10월 가정통신문-10월3주",
+        "url": "https://www.shinchonkid.com/web/customer/correspondence_view.html?no=581",
+        "images": [
+          "http://www.shinchonkid.com/web/upload/1760685910_455750.jpg",
+          "http://www.shinchonkid.com/web/upload/1760685916_284677.jpg"
+        ]
+      },
+      {
+        "title": "10월 가정통신문-10월2주",
+        "url": "https://www.shinchonkid.com/web/customer/correspondence_view.html?no=580",
+        "images": [
+          "http://www.shinchonkid.com/web/upload/1759393155_027558.jpg",
+          "http://www.shinchonkid.com/web/upload/1759393160_161442.jpg"
+        ]
+      },
+      {
+        "title": "10월 가정통신문-10월1주",
+        "url": "https://www.shinchonkid.com/web/customer/correspondence_view.html?no=579",
+        "images": [
+          "http://www.shinchonkid.com/web/upload/1758872926_681268.jpg",
+          "http://www.shinchonkid.com/web/upload/1758872932_597075.jpg"
+        ]
+      },
+      {
+        "title": "9월 가정통신문-9월4주",
+        "url": "https://www.shinchonkid.com/web/customer/correspondence_view.html?no=578",
+        "images": [
+          "http://www.shinchonkid.com/web/upload/1758270754_591441.jpg",
+          "http://www.shinchonkid.com/web/upload/1758270761_172037.jpg"
+        ]
+      },
+      {
+        "title": "9월 가정통신문-9월3주",
+        "url": "https://www.shinchonkid.com/web/customer/correspondence_view.html?no=577",
+        "images": [
+          "http://www.shinchonkid.com/web/upload/1757665293_768649.jpg"
+        ]
+      }
+    ],
+    "monthlyEvents": [
+      {
+        "title": "다문화교육(필리핀)",
+        "url": "https://www.shinchonkid.com/web/customer/month_view.html?no=1217",
+        "textSnippet": "-"
+      }
+    ]
+  }
+  ```

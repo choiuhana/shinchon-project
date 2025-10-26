@@ -11,22 +11,40 @@ import {
 } from "@/components/ui/card";
 import {
 	newsCategories,
-	newsItems,
 	type NewsCategoryKey,
+	type NewsPost,
 } from "@/lib/data/news";
+import { getNewsList } from "@/lib/data/news-repository";
+
+function formatDate(date: Date | null) {
+	if (!date) {
+		return "";
+	}
+
+	return new Intl.DateTimeFormat("ko-KR", {
+		year: "numeric",
+		month: "2-digit",
+		day: "2-digit",
+	}).format(date);
+}
+
+function renderSummary(item: NewsPost) {
+	if (item.summary && item.summary.trim().length > 0) {
+		return item.summary;
+	}
+	return item.content[0] ?? "자세한 내용을 확인해 주세요.";
+}
 
 type NewsIndexProps = {
 	activeCategoryKey?: NewsCategoryKey;
 };
 
-export function NewsIndex({ activeCategoryKey }: NewsIndexProps) {
+export async function NewsIndex({ activeCategoryKey }: NewsIndexProps) {
 	const activeCategory = activeCategoryKey
 		? newsCategories.find((category) => category.key === activeCategoryKey)
 		: undefined;
 
-	const filteredNews = activeCategory
-		? newsItems.filter((item) => item.category === activeCategory.key)
-		: newsItems;
+	const posts = await getNewsList({ category: activeCategoryKey, limit: 60 });
 
 	return (
 		<div className="bg-[var(--background)] text-[var(--brand-navy)]">
@@ -77,28 +95,36 @@ export function NewsIndex({ activeCategoryKey }: NewsIndexProps) {
 				) : null}
 
 				<div className="grid gap-6 md:grid-cols-2">
-					{filteredNews.map((item) => (
-						<Card key={item.slug} className="h-full border-[var(--border)] bg-white/85 backdrop-blur">
-							<CardHeader className="space-y-3">
-								<Badge variant="ghost" className="w-fit text-xs text-[var(--brand-secondary)]">
-									{newsCategories.find((category) => category.key === item.category)?.label ??
-										item.category}
-								</Badge>
-								<CardTitle className="text-xl leading-snug text-[var(--brand-navy)]">
-									{item.title}
-								</CardTitle>
-								<CardDescription className="text-xs uppercase tracking-[0.18em] text-muted-foreground">
-									{item.date}
-								</CardDescription>
-							</CardHeader>
-							<CardContent className="space-y-4">
-								<p className="text-sm leading-relaxed text-muted-foreground">{item.summary}</p>
-								<Button variant="link" className="px-0 text-[var(--brand-secondary)]" asChild>
-									<Link href={`/news/${item.slug}`}>자세히 보기</Link>
-								</Button>
-							</CardContent>
-						</Card>
-					))}
+					{posts.length === 0 ? (
+						<p className="py-16 text-center text-sm text-muted-foreground">
+							등록된 게시글이 없습니다.
+						</p>
+					) : (
+						posts.map((item) => (
+							<Card key={item.slug} className="h-full border-[var(--border)] bg-white/85 backdrop-blur">
+								<CardHeader className="space-y-3">
+									<Badge variant="ghost" className="w-fit text-xs text-[var(--brand-secondary)]">
+										{newsCategories.find((category) => category.key === item.category)?.label ??
+											item.category}
+									</Badge>
+									<CardTitle className="text-xl leading-snug text-[var(--brand-navy)]">
+										{item.title}
+									</CardTitle>
+									<CardDescription className="text-xs uppercase tracking-[0.18em] text-muted-foreground">
+										{formatDate(item.publishAt ?? item.createdAt)}
+									</CardDescription>
+								</CardHeader>
+								<CardContent className="space-y-4">
+									<p className="text-sm leading-relaxed text-muted-foreground">
+										{renderSummary(item)}
+									</p>
+									<Button variant="link" className="px-0 text-[var(--brand-secondary)]" asChild>
+										<Link href={`/news/${item.slug}`}>자세히 보기</Link>
+									</Button>
+								</CardContent>
+							</Card>
+						))
+					)}
 				</div>
 			</section>
 		</div>

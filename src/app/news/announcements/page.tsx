@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 
 import { NewsIndex } from "../_components/news-index";
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
 	title: "공지사항 | 신촌몬테소리유치원 알림마당",
 	description:

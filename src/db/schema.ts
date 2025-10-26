@@ -35,3 +35,53 @@ export const newsAttachments = pgTable("news_attachments", {
 	label: text("label"),
 	createdAt: timestamp("created_at").notNull().defaultNow(),
 });
+
+export const classrooms = pgTable("classrooms", {
+	id: uuid("id").primaryKey().defaultRandom(),
+	name: text("name").notNull(),
+	description: text("description"),
+	ageRange: text("age_range"),
+	leadTeacher: text("lead_teacher"),
+	assistantTeacher: text("assistant_teacher"),
+	createdAt: timestamp("created_at").notNull().defaultNow(),
+	updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
+export const children = pgTable("children", {
+	id: uuid("id").primaryKey().defaultRandom(),
+	classroomId: uuid("classroom_id").references(() => classrooms.id, { onDelete: "set null" }),
+	name: text("name").notNull(),
+	birthdate: timestamp("birthdate"),
+	enrollmentDate: timestamp("enrollment_date"),
+	status: text("status").notNull().default("active"),
+	createdAt: timestamp("created_at").notNull().defaultNow(),
+	updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
+export const childParents = pgTable("child_parents", {
+	childId: uuid("child_id").references(() => children.id, { onDelete: "cascade" }),
+	parentId: uuid("parent_id").references(() => users.id, { onDelete: "cascade" }),
+	relationship: text("relationship"),
+	primaryContact: boolean("primary_contact").notNull().default(false),
+	createdAt: timestamp("created_at").notNull().defaultNow(),
+});
+
+export const classPosts = pgTable("class_posts", {
+	id: uuid("id").primaryKey().defaultRandom(),
+	classroomId: uuid("classroom_id").references(() => classrooms.id, { onDelete: "cascade" }),
+	authorId: uuid("author_id").references(() => users.id, { onDelete: "set null" }),
+	title: text("title").notNull(),
+	summary: text("summary"),
+	content: text("content").notNull(),
+	publishAt: timestamp("publish_at"),
+	createdAt: timestamp("created_at").notNull().defaultNow(),
+	updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
+export const classPostAttachments = pgTable("class_post_attachments", {
+	id: uuid("id").primaryKey().defaultRandom(),
+	postId: uuid("post_id").references(() => classPosts.id, { onDelete: "cascade" }),
+	fileUrl: text("file_url").notNull(),
+	label: text("label"),
+	createdAt: timestamp("created_at").notNull().defaultNow(),
+});

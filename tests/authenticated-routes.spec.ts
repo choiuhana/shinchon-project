@@ -36,7 +36,7 @@ test.describe("인증·권한 경로", () => {
 
 	await page.goto("/parents");
 	await expect(page).toHaveURL(/\/parents$/);
-	await expect(page.getByRole("heading", { name: "학부모 포털이 곧 오픈합니다" })).toBeVisible();
+	await expect(page.getByRole("heading", { name: "등록된 자녀" })).toBeVisible();
 	});
 
 	test("승인 대기 학부모는 /parents 접근 시 로그인으로 되돌아가 안내 메시지를 확인한다", async ({ page }) => {
@@ -73,7 +73,8 @@ test.describe("인증·권한 경로", () => {
 		});
 
 		await expect(page).toHaveURL(/\/admin$/);
-		await expect(page.getByRole("heading", { name: "관리자 콘솔" })).toBeVisible();
-		await expect(page.getByText("관리자 전용 기능이 곧 준비됩니다.")).toBeVisible();
+		await expect(page.getByRole("heading", { name: "콘텐츠 관리" })).toBeVisible();
+		await expect(page.getByRole("heading", { name: "게시글 작성" })).toBeVisible();
+		await expect(page.getByText("등록된 게시글")).toBeVisible();
 	});
 });

@@ -20,7 +20,8 @@ import {
 	CardHeader,
 	CardTitle,
 } from "@/components/ui/card";
-import { homepageNewsPreview } from "@/lib/data/news";
+import { newsCategories, type NewsPost } from "@/lib/data/news";
+import { getHighlightedNews } from "@/lib/data/news-repository";
 
 const heroStats = [
 	{ label: "모집 연령", value: "만 3-5세" },
@@ -116,7 +117,23 @@ const visitInfos = [
 	},
 ];
 
-export default function Home() {
+function formatNewsDate(date: Date | null) {
+	if (!date) {
+		return "";
+	}
+	return new Intl.DateTimeFormat("ko-KR", {
+		year: "numeric",
+		month: "2-digit",
+		day: "2-digit",
+	}).format(date);
+}
+
+function resolveCategoryLabel(key: NewsPost["category"]) {
+	return newsCategories.find((category) => category.key === key)?.label ?? key;
+}
+
+export default async function Home() {
+	const highlightedNews = await getHighlightedNews(3);
 	return (
 		<div className="bg-[var(--background)] text-[var(--brand-navy)]">
 			<section id="hero" className="relative isolate overflow-hidden">
@@ -347,21 +364,26 @@ export default function Home() {
 				</header>
 
 				<div className="grid gap-6 md:grid-cols-3">
-					{homepageNewsPreview.map((item) => (
-						<Card key={item.title} className="h-full border-[var(--border)]">
+					{highlightedNews.length === 0 ? (
+						<p className="py-12 text-center text-sm text-muted-foreground">
+							등록된 소식이 없습니다.
+						</p>
+					) : (
+						highlightedNews.map((item) => (
+							<Card key={item.id} className="h-full border-[var(--border)]">
 							<CardHeader className="space-y-3">
 								<Badge variant="ghost" className="w-fit text-xs text-[var(--brand-secondary)]">
-									{item.category}
+									{resolveCategoryLabel(item.category)}
 								</Badge>
 								<CardTitle className="text-lg text-[var(--brand-navy)]">{item.title}</CardTitle>
 								<CardDescription className="text-xs uppercase tracking-[0.18em] text-muted-foreground">
-									{item.date}
+									{formatNewsDate(item.publishAt ?? item.createdAt)}
 								</CardDescription>
 							</CardHeader>
 							<CardContent className="space-y-3">
-								{item.summary ? (
-									<p className="text-sm leading-relaxed text-muted-foreground">{item.summary}</p>
-								) : null}
+								<p className="text-sm leading-relaxed text-muted-foreground">
+									{item.summary ?? item.content[0] ?? "자세한 내용을 확인해 주세요."}
+								</p>
 								<Button variant="link" className="px-0 text-[var(--brand-secondary)]" asChild>
 									<Link href={`/news/${item.slug}`}>
 										자세히 보기
@@ -370,7 +392,8 @@ export default function Home() {
 								</Button>
 							</CardContent>
 						</Card>
-					))}
+						))
+					)}
 				</div>
 			</section>
 

@@ -5,6 +5,7 @@ const config: PlaywrightTestConfig = {
 	globalSetup: "./tests/global-setup.ts",
 	globalTeardown: "./tests/global-teardown.ts",
 	timeout: 60_000,
+	globalTimeout: 5 * 60_000,
 	workers: 1,
 	expect: {
 		timeout: 7_000,

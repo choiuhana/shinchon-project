@@ -1,6 +1,8 @@
 import { NewsIndex } from "./_components/news-index";
 import { newsCategories, type NewsCategoryKey } from "@/lib/data/news";
 
+export const dynamic = "force-dynamic";
+
 type NewsPageProps = {
 	searchParams?: Promise<{
 		category?: string;
