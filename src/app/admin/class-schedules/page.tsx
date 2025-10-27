@@ -36,64 +36,62 @@ export default async function AdminClassSchedulesPage() {
 	]);
 
 	return (
-		<div className="bg-[var(--background)] text-[var(--brand-navy)]">
-			<section className="mx-auto flex w-full max-w-6xl flex-col gap-8 px-6 py-12 sm:px-10 lg:px-12">
+		<div className="space-y-8">
+			<div className="flex flex-wrap items-center justify-between gap-3">
+				<div>
+					<p className="text-xs uppercase tracking-[0.3em] text-[var(--brand-secondary)]">Admin Console</p>
+					<h1 className="font-heading text-[clamp(2rem,3vw,2.75rem)] leading-tight">학사 일정 관리</h1>
+					<p className="text-sm text-muted-foreground">반별 일정과 전체 행사를 등록하고 학부모 포털에 노출합니다.</p>
+				</div>
+				<Button variant="outline" asChild>
+					<Link href="/admin">대시보드로 돌아가기</Link>
+				</Button>
+			</div>
+
+			<CreateScheduleForm classrooms={classrooms} />
+
+			<section className="rounded-[var(--radius-lg)] border border-[var(--border)] bg-white/90 p-6 shadow-[var(--shadow-soft)]">
 				<div className="flex items-center justify-between">
 					<div>
-						<p className="text-xs uppercase tracking-[0.3em] text-[var(--brand-secondary)]">Admin Console</p>
-						<h1 className="font-heading text-[clamp(2rem,3vw,2.75rem)] leading-tight">학사 일정 관리</h1>
-						<p className="text-sm text-muted-foreground">반별 일정과 전체 행사를 등록하고 학부모 포털에 노출합니다.</p>
+						<h2 className="text-lg	font-semibold">등록된 일정</h2>
+						<p className="text-sm text-muted-foreground">날짜 순으로 정렬됩니다.</p>
 					</div>
-					<Button variant="outline" asChild>
-						<Link href="/admin">← 관리자 홈</Link>
-					</Button>
+					<Badge variant="outline">총 {schedules.length}건</Badge>
 				</div>
 
-				<CreateScheduleForm classrooms={classrooms} />
-
-				<section className="rounded-[var(--radius-lg)] border border-[var(--border)] bg-white/90 p-6 shadow-[var(--shadow-soft)]">
-					<div className="flex items-center justify-between">
-						<div>
-							<h2 className="text-lg font-semibold">등록된 일정</h2>
-							<p className="text-sm text-muted-foreground">날짜 순으로 정렬됩니다.</p>
-						</div>
-						<Badge variant="outline">총 {schedules.length}건</Badge>
-					</div>
-
-					<Table>
-						<TableHeader>
+				<Table>
+					<TableHeader>
+						<TableRow>
+							<TableHead>대상</TableHead>
+							<TableHead>제목</TableHead>
+							<TableHead>기간</TableHead>
+							<TableHead>장소</TableHead>
+							<TableHead className="text-right">관리</TableHead>
+						</TableRow>
+					</TableHeader>
+					<TableBody>
+						{schedules.length === 0 ? (
 							<TableRow>
-								<TableHead>대상</TableHead>
-								<TableHead>제목</TableHead>
-								<TableHead>기간</TableHead>
-								<TableHead>장소</TableHead>
-								<TableHead className="text-right">관리</TableHead>
+								<TableCell colSpan={5} className="py-10 text-center text-sm text-muted-foreground">
+									등록된 일정이 없습니다.
+								</TableCell>
 							</TableRow>
-						</TableHeader>
-						<TableBody>
-							{schedules.length === 0 ? (
-								<TableRow>
-									<TableCell colSpan={5} className="py-10 text-center text-sm text-muted-foreground">
-										등록된 일정이 없습니다.
+						) : (
+							schedules.map((schedule) => (
+								<TableRow key={schedule.id}>
+									<TableCell>{schedule.classroomName ?? "전체"}</TableCell>
+									<TableCell className="font-semibold">{schedule.title}</TableCell>
+									<TableCell>{formatDateRange(schedule.startDate, schedule.endDate)}</TableCell>
+									<TableCell>{schedule.location ?? "-"}</TableCell>
+									<TableCell className="text-right">
+										<DeleteScheduleButton scheduleId={schedule.id} />
 									</TableCell>
 								</TableRow>
-							) : (
-								schedules.map((schedule) => (
-									<TableRow key={schedule.id}>
-										<TableCell>{schedule.classroomName ?? "전체"}</TableCell>
-										<TableCell className="font-semibold">{schedule.title}</TableCell>
-										<TableCell>{formatDateRange(schedule.startDate, schedule.endDate)}</TableCell>
-										<TableCell>{schedule.location ?? "-"}</TableCell>
-										<TableCell className="text-right">
-											<DeleteScheduleButton scheduleId={schedule.id} />
-										</TableCell>
-									</TableRow>
-								))
-							)}
-						</TableBody>
-						<TableCaption>삭제 시 학부모 포털 일정에서도 제거됩니다.</TableCaption>
-					</Table>
-				</section>
+							))
+						)}
+					</TableBody>
+					<TableCaption>삭제 시 학부모 포털 일정에서도 제거됩니다.</TableCaption>
+				</Table>
 			</section>
 		</div>
 	);

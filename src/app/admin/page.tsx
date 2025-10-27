@@ -180,44 +180,43 @@ export default async function AdminDashboardPage({ searchParams }: AdminPageProp
 			: posts.filter((post) => post.category === activeCategory);
 
 	return (
-		<div className="bg-[var(--background)] text-[var(--brand-navy)]">
-			<section className="mx-auto flex w-full max-w-6xl flex-col gap-10 px-6 py-12 sm:px-10 lg:px-12">
-				<header className="space-y-6">
-					<div className="space-y-2">
-						<p className="font-medium uppercase tracking-[0.3em] text-[var(--brand-secondary)]">
-							Admin Console
-						</p>
-						<h1 className="font-heading text-[clamp(2.25rem,3vw,3rem)] leading-tight">콘텐츠 관리</h1>
-						<p className="max-w-2xl text-sm leading-relaxed text-muted-foreground">
-							공지사항, 가정통신문, 행사 소식을 등록하고 관리할 수 있습니다. 게시 후에는 뉴스 페이지와 메인
-							미리보기가 자동으로 갱신됩니다.
+		<div className="space-y-10">
+			<header className="space-y-6">
+				<div className="space-y-2">
+					<p className="font-medium uppercase tracking-[0.3em] text-[var(--brand-secondary)]">
+						Admin Console
+					</p>
+					<h1 className="font-heading text-[clamp(2.25rem,3vw,3rem)] leading-tight">콘텐츠 관리</h1>
+					<p className="max-w-2xl text-sm leading-relaxed text-muted-foreground">
+						공지사항, 가정통신문, 행사 소식을 등록하고 관리할 수 있습니다. 게시 후에는 뉴스 페이지와 메인
+						미리보기가 자동으로 갱신됩니다.
+					</p>
+				</div>
+				<div className="flex flex-wrap gap-3">
+					<Button variant="outline" className="w-full sm:w-auto" asChild>
+						<Link href="/admin/class-posts">반 소식 관리</Link>
+					</Button>
+					<Button variant="outline" className="w-full sm:w-auto" asChild>
+						<Link href="/admin/parent-resources">서식/운영위 자료</Link>
+					</Button>
+					<Button variant="outline" className="w-full sm:w-auto" asChild>
+						<Link href="/admin/parent-inquiries">1:1 문의 관리</Link>
+					</Button>
+				</div>
+			</header>
+
+			<CreatePostForm categories={newsCategories} />
+
+			<section className="space-y-4">
+				<div className="flex flex-wrap items-center justify-between gap-3">
+					<div>
+						<h2 className="text-lg font-semibold text-[var(--brand-navy)]">등록된 게시글</h2>
+						<p className="text-sm text-muted-foreground">
+							최근 게시글부터 정렬됩니다. 카테고리를 선택하여 필터링할 수 있습니다.
 						</p>
 					</div>
-					<div className="flex flex-wrap gap-3">
-						<Button variant="outline" className="w-full sm:w-auto" asChild>
-							<Link href="/admin/class-posts">반 소식 관리</Link>
-						</Button>
-						<Button variant="outline" className="w-full sm:w-auto" asChild>
-							<Link href="/admin/parent-resources">서식/운영위 자료</Link>
-						</Button>
-						<Button variant="outline" className="w-full sm:w-auto" asChild>
-							<Link href="/admin/parent-inquiries">1:1 문의 관리</Link>
-						</Button>
-					</div>
-				</header>
 
-				<CreatePostForm categories={newsCategories} />
-
-				<section className="space-y-4">
-					<div className="flex flex-wrap items-center justify-between gap-3">
-						<div>
-							<h2 className="text-lg font-semibold text-[var(--brand-navy)]">등록된 게시글</h2>
-							<p className="text-sm text-muted-foreground">
-								최근 게시글부터 정렬됩니다. 카테고리를 선택하여 필터링할 수 있습니다.
-							</p>
-						</div>
-
-						<nav className="flex flex-wrap items-center gap-2">
+					<nav className="flex flex-wrap items-center gap-2">
 							{CATEGORY_FILTERS.map((filter) => {
 								const isActive = filter.key === activeCategory;
 								const search = filter.key === "all" ? "" : `?category=${filter.key}`;
@@ -333,7 +332,6 @@ export default async function AdminDashboardPage({ searchParams }: AdminPageProp
 						</TableCaption>
 					</Table>
 				</section>
-			</section>
 		</div>
 	);
 }

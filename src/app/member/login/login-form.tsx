@@ -118,10 +118,14 @@ export function LoginForm() {
 								</div>
 							</div>
 
-							{successMessage ? <p className="text-xs text-success">{successMessage}</p> : null}
-							{(error ?? derivedErrorMessage) ? (
-								<p className="text-xs text-destructive">{error ?? derivedErrorMessage}</p>
-							) : null}
+							<div className="min-h-[1.5rem] text-xs leading-relaxed">
+								{successMessage ? (
+									<p className="text-success">{successMessage}</p>
+								) : null}
+								{!successMessage && (error ?? derivedErrorMessage) ? (
+									<p className="text-destructive">{error ?? derivedErrorMessage}</p>
+								) : null}
+							</div>
 						</CardContent>
 						<CardFooter className="flex flex-col gap-3">
 							<Button type="submit" className="w-full" disabled={isPending}>

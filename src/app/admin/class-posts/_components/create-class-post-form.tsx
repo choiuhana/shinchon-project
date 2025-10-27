@@ -72,9 +72,13 @@ function ClassPostForm({ classrooms, mode, initialValues }: ClassPostFormProps) 
 				<p className="text-sm text-muted-foreground">{helperText}</p>
 			</div>
 
-			<form ref={formRef} action={formAction} className="mt-6 grid gap-6 md:grid-cols-2">
+			<form
+				ref={formRef}
+				action={formAction}
+				className="mt-6 grid gap-8 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]"
+			>
 				{mode === "edit" && initialValues?.postId ? <input type="hidden" name="postId" value={initialValues.postId} /> : null}
-				<div className="grid gap-4">
+				<div className="grid gap-6 min-w-0">
 					<div className="grid gap-2">
 						<Label htmlFor="classroomId">반 선택</Label>
 						<select
@@ -114,6 +118,19 @@ function ClassPostForm({ classrooms, mode, initialValues }: ClassPostFormProps) 
 						/>
 					</div>
 
+					<div className="grid gap-2 min-w-0">
+						<Label htmlFor="contentMarkdown">본문</Label>
+						<RichTextEditor
+							name="contentMarkdown"
+							initialValue={initialContent}
+							resetKey={mode === "create" ? editorResetKey : undefined}
+						/>
+						<p className="text-xs text-muted-foreground">아이 활동 사진, 일정 안내 등 상세 내용을 입력해 주세요.</p>
+					</div>
+
+				</div>
+
+				<div className="grid gap-6 min-w-0">
 					<div className="grid gap-2">
 						<Label htmlFor="publishAt">게시 예정일 (선택)</Label>
 						<input
@@ -124,22 +141,10 @@ function ClassPostForm({ classrooms, mode, initialValues }: ClassPostFormProps) 
 							className="h-11 w-full rounded-[var(--radius-sm)] border border-[var(--border)] bg-white px-3 text-sm text-[var(--brand-navy)]"
 						/>
 					</div>
-				</div>
-
-				<div className="grid gap-4">
-					<div className="grid gap-2">
-						<Label htmlFor="contentMarkdown">본문</Label>
-						<RichTextEditor
-							name="contentMarkdown"
-							initialValue={initialContent}
-							resetKey={mode === "create" ? editorResetKey : undefined}
-						/>
-						<p className="text-xs text-muted-foreground">아이 활동 사진, 일정 안내 등 상세 내용을 입력해 주세요.</p>
-					</div>
 
 					<div className="grid gap-2">
 						<span className="text-sm font-medium text-[var(--brand-navy)]">첨부 자료 (최대 {MAX_ATTACHMENTS}개)</span>
-						<div className="grid gap-3">
+						<div className="grid gap-3 min-w-0 md:grid-cols-2">
 							{attachments.map((attachment, index) => (
 								<div key={index} className="grid gap-2 rounded-[var(--radius-sm)] border border-[var(--border)] bg-[rgba(248,247,255,0.6)] p-3">
 									<div className="grid gap-1">

@@ -40,6 +40,11 @@ export default async function ParentsDashboardPage() {
 					<p className="text-sm leading-relaxed text-muted-foreground">
 						반별 소식과 일정, 첨부 자료를 이곳에서 확인할 수 있습니다. 오늘도 아이의 배움 여정을 응원해 주셔서 감사합니다.
 					</p>
+					{session.user.role === "admin" ? (
+						<Button variant="outline" size="sm" className="w-fit" asChild>
+							<Link href="/admin">관리자 콘솔 열기</Link>
+						</Button>
+					) : null}
 				</div>
 			</section>
 
@@ -160,8 +165,17 @@ export default async function ParentsDashboardPage() {
 									</Button>
 								</CardContent>
 							</Card>
-						))}
+							))}
 					</div>
+					{session.user.role === "admin" ? (
+						<p className="text-xs text-muted-foreground">
+							관리자는 언제든{" "}
+							<Link href="/admin" className="text-[var(--brand-primary)] underline-offset-4 hover:underline">
+								Admin Console
+							</Link>
+							에서 게시글과 리소스를 관리할 수 있습니다.
+						</p>
+					) : null}
 				</div>
 			</section>
 		</div>

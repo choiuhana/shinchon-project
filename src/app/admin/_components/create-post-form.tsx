@@ -91,10 +91,10 @@ function NewsPostForm({ categories, mode, initialValues }: NewsPostFormProps) {
 			<form
 				ref={formRef}
 				action={formAction}
-				className="mt-6 grid gap-6 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]"
+				className="mt-6 grid gap-8 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]"
 			>
 				{mode === "edit" && initialValues?.postId ? <input type="hidden" name="postId" value={initialValues.postId} /> : null}
-				<div className="grid gap-4">
+				<div className="grid gap-6 min-w-0">
 					<div className="grid gap-2">
 						<Label htmlFor="title">제목</Label>
 						<Input
@@ -132,7 +132,7 @@ function NewsPostForm({ categories, mode, initialValues }: NewsPostFormProps) {
 						/>
 					</div>
 
-					<div className="grid gap-2">
+					<div className="grid gap-2 min-w-0">
 						<Label htmlFor="contentMarkdown">본문</Label>
 						<RichTextEditor
 							name="contentMarkdown"
@@ -145,7 +145,7 @@ function NewsPostForm({ categories, mode, initialValues }: NewsPostFormProps) {
 					</div>
 				</div>
 
-				<div className="grid gap-4">
+				<div className="grid gap-6 min-w-0">
 					<div className="grid gap-2">
 						<Label htmlFor="publishAt">게시 예정일 (선택)</Label>
 						<input
@@ -215,7 +215,7 @@ function NewsPostForm({ categories, mode, initialValues }: NewsPostFormProps) {
 					</button>
 
 					{showAdvanced ? (
-						<div className="grid gap-4 rounded-[var(--radius-md)] border border-dashed border-[var(--border)] p-4">
+						<div className="flex flex-col gap-4 rounded-[var(--radius-md)] border border-dashed border-[var(--border)] p-4 min-w-0">
 							<div className="grid gap-2">
 								<Label htmlFor="slug">슬러그 (선택)</Label>
 								<Input
@@ -228,7 +228,7 @@ function NewsPostForm({ categories, mode, initialValues }: NewsPostFormProps) {
 
 							<div className="grid gap-2">
 								<span className="text-sm font-medium text-[var(--brand-navy)]">첨부 자료 (최대 {MAX_ATTACHMENTS}개)</span>
-								<div className="grid gap-3">
+								<div className="grid gap-3 min-w-0 md:grid-cols-2">
 									{attachments.map((attachment, index) => (
 										<div
 											key={index}

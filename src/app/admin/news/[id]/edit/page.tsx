@@ -108,21 +108,19 @@ export default async function EditNewsPostPage({ params }: EditNewsPostPageProps
 	};
 
 	return (
-		<div className="bg-[var(--background)] text-[var(--brand-navy)]">
-			<section className="mx-auto flex w-full max-w-5xl flex-col gap-6 px-6 py-12 sm:px-10 lg:px-12">
-				<div className="flex flex-wrap items-center justify-between gap-4">
-					<div>
-						<p className="text-xs uppercase tracking-[0.3em] text-[var(--brand-secondary)]">Admin Console</p>
-						<h1 className="font-heading text-[clamp(2rem,3vw,2.75rem)] leading-tight">게시글 수정</h1>
-						<p className="text-sm text-muted-foreground">기존 공지/가정통신문 콘텐츠를 안전하게 수정하세요.</p>
-					</div>
-					<Button variant="outline" asChild>
-						<Link href="/admin">← 관리자 홈으로</Link>
-					</Button>
+		<div className="space-y-6">
+			<div className="flex flex-wrap items-center justify-between gap-4">
+				<div>
+					<p className="text-xs uppercase tracking-[0.3em] text-[var(--brand-secondary)]">Admin Console</p>
+					<h1 className="font-heading text-[clamp(2rem,3vw,2.75rem)] leading-tight">게시글 수정</h1>
+					<p className="text-sm text-muted-foreground">기존 공지/가정통신문 콘텐츠를 안전하게 수정하세요.</p>
 				</div>
+				<Button variant="outline" asChild>
+					<Link href="/admin">대시보드로 돌아가기</Link>
+				</Button>
+			</div>
 
-				<EditPostForm categories={newsCategories} initialValues={initialValues} />
-			</section>
+			<EditPostForm categories={newsCategories} initialValues={initialValues} />
 		</div>
 	);
 }

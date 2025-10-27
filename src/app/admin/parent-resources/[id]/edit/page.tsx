@@ -56,21 +56,19 @@ export default async function EditParentResourcePage({ params }: EditParentResou
 	};
 
 	return (
-		<div className="bg-[var(--background)] text-[var(--brand-navy)]">
-			<section className="mx-auto flex w-full max-w-4xl flex-col gap-6 px-6 py-12 sm:px-10 lg:px-12">
-				<div className="flex flex-wrap items-center justify-between gap-4">
-					<div>
-						<p className="text-xs uppercase tracking-[0.3em] text-[var(--brand-secondary)]">Admin Console</p>
-						<h1 className="font-heading text-[clamp(2rem,3vw,2.75rem)] leading-tight">자료 수정</h1>
-						<p className="text-sm text-muted-foreground">서식/운영위원회 문서를 편집해 최신 정보를 유지하세요.</p>
-					</div>
-					<Button variant="outline" asChild>
-						<Link href="/admin/parent-resources">← 목록으로 돌아가기</Link>
-					</Button>
+		<div className="space-y-6">
+			<div className="flex flex-wrap items-center justify-between gap-4">
+				<div>
+					<p className="text-xs uppercase tracking-[0.3em] text-[var(--brand-secondary)]">Admin Console</p>
+					<h1 className="font-heading text-[clamp(2rem,3vw,2.75rem)] leading-tight">자료 수정</h1>
+					<p className="text-sm text-muted-foreground">서식/운영위원회 문서를 편집해 최신 정보를 유지하세요.</p>
 				</div>
+				<Button variant="outline" asChild>
+					<Link href="/admin/parent-resources">목록으로 돌아가기</Link>
+				</Button>
+			</div>
 
-				<EditParentResourceForm initialValues={initialValues} />
-			</section>
+			<EditParentResourceForm initialValues={initialValues} />
 		</div>
 	);
 }

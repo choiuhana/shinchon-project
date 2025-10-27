@@ -36,22 +36,24 @@ export function RichTextEditor({ name, initialValue = "", resetKey }: RichTextEd
 	}, [resetKey]);
 
 	return (
-		<div className="grid gap-2">
-			<Editor
-				ref={(instance) => {
-					editorRef.current = instance?.getInstance() ?? null;
-				}}
-				initialValue={initialValue}
-				initialEditType="wysiwyg"
-				hideModeSwitch
-				height="380px"
-				usageStatistics={false}
-				onChange={() => {
-					const markdown = editorRef.current?.getMarkdown() ?? "";
-					setValue(markdown);
-				}}
-				toolbarItems={toolbarItems}
-			/>
+		<div className="grid gap-2 min-w-0">
+			<div className="min-w-0 overflow-hidden rounded-[var(--radius-md)] border border-[var(--border)] bg-white">
+				<Editor
+					ref={(instance) => {
+						editorRef.current = instance?.getInstance() ?? null;
+					}}
+					initialValue={initialValue}
+					initialEditType="wysiwyg"
+					hideModeSwitch
+					height="380px"
+					usageStatistics={false}
+					onChange={() => {
+						const markdown = editorRef.current?.getMarkdown() ?? "";
+						setValue(markdown);
+					}}
+					toolbarItems={toolbarItems}
+				/>
+			</div>
 			<input type="hidden" name={name} value={value} />
 		</div>
 	);
