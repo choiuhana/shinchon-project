@@ -22,7 +22,6 @@ import {
 } from "@/components/ui/card";
 import { newsCategories, type NewsPost } from "@/lib/data/news";
 import { getHighlightedNews, getNewsList } from "@/lib/data/news-repository";
-import { auth } from "@/lib/auth";
 
 const heroStats = [
 	{ label: "모집 연령", value: "만 3-5세" },
@@ -134,7 +133,6 @@ function resolveCategoryLabel(key: NewsPost["category"]) {
 }
 
 export default async function Home() {
-	const session = await auth();
 	const highlightedNews = await getHighlightedNews(3);
 	const homepageNews =
 		highlightedNews.length > 0 ? highlightedNews : await getNewsList({ limit: 3 });
@@ -170,11 +168,6 @@ export default async function Home() {
 							<Button variant="secondary" size="lg" asChild>
 								<Link href="/#programs">교육 프로그램 보기</Link>
 							</Button>
-							{session?.user?.role === "admin" ? (
-								<Button variant="outline" size="lg" asChild>
-									<Link href="/admin">관리자 콘솔</Link>
-								</Button>
-							) : null}
 						</div>
 						<p className="text-sm text-muted-foreground">
 							상담 신청 후 24시간 내 담당 교사가 연락드리며, 원 방문 투어를 조율합니다.

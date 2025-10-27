@@ -25,6 +25,7 @@ type CtaButton = {
 	label: string;
 	href: string;
 	variant: "default" | "outline" | "secondary";
+	className?: string;
 };
 
 export function SiteHeaderClient({ isAdmin, isAuthenticated }: SiteHeaderClientProps) {
@@ -40,37 +41,61 @@ export function SiteHeaderClient({ isAdmin, isAuthenticated }: SiteHeaderClientP
 
 	const closeMobileNav = () => setIsMobileNavOpen(false);
 
-	const isParentPortalRoute = pathname?.startsWith("/parents") ?? false;
-	const homeToggleLabel = isParentPortalRoute ? "메인 홈으로" : "학부모 포털";
-	const homeToggleHref = isParentPortalRoute ? "/" : "/parents";
+	const isAdminRoute = pathname?.startsWith("/admin") ?? false;
 
 	const desktopCtas: CtaButton[] = useMemo(() => {
 		const items: CtaButton[] = [
 			{ key: "admissions", label: "입학 상담 예약", href: "/#admissions", variant: "default" },
-			{ key: "home-toggle", label: homeToggleLabel, href: homeToggleHref, variant: "outline" },
 		];
 
 		if (isAdmin) {
-			items.push({ key: "admin-console", label: "관리자 콘솔", href: "/admin", variant: "outline" });
+			items.push({
+				key: "admin-toggle",
+				label: isAdminRoute ? "홈 화면" : "관리자 콘솔",
+				href: isAdminRoute ? "/" : "/admin",
+				variant: "outline",
+			});
+		} else {
+			items.push({
+				key: "parents-portal",
+				label: "학부모 포털",
+				href: "/parents",
+				variant: "outline",
+				className:
+					"border-[var(--brand-secondary)] text-[var(--brand-secondary)] hover:bg-[var(--brand-secondary)]/10",
+			});
 		}
 
 		return items;
-	}, [homeToggleHref, homeToggleLabel, isAdmin]);
+	}, [isAdmin, isAdminRoute]);
 
 	const mobileCtas: CtaButton[] = useMemo(() => {
 		const items: CtaButton[] = [
 			{ key: "admissions", label: "입학 상담 예약", href: "/#admissions", variant: "default" },
-			{ key: "home-toggle", label: homeToggleLabel, href: homeToggleHref, variant: "outline" },
 		];
 
 		if (isAdmin) {
-			items.push({ key: "admin-console", label: "관리자 콘솔", href: "/admin", variant: "outline" });
+			items.push({
+				key: "admin-toggle",
+				label: isAdminRoute ? "홈 화면" : "관리자 콘솔",
+				href: isAdminRoute ? "/" : "/admin",
+				variant: "outline",
+			});
+		} else {
+			items.push({
+				key: "parents-portal",
+				label: "학부모 포털",
+				href: "/parents",
+				variant: "outline",
+				className:
+					"border-[var(--brand-secondary)] text-[var(--brand-secondary)] hover:bg-[var(--brand-secondary)]/10",
+			});
 		}
 
 		items.push({ key: "programs", label: "교육 프로그램 보기", href: "/#programs", variant: "secondary" });
 
 		return items;
-	}, [homeToggleHref, homeToggleLabel, isAdmin]);
+	}, [isAdmin, isAdminRoute]);
 
 	const utilityLinks = isAuthenticated ? [] : [{ href: "/member/login", label: "로그인" }];
 
@@ -108,15 +133,15 @@ export function SiteHeaderClient({ isAdmin, isAuthenticated }: SiteHeaderClientP
 							</Link>
 						))}
 					</div>
-				) : null}
+					) : null}
 
-				<div className="hidden items-center gap-2 md:flex">
-					{desktopCtas.map((cta) => (
-						<Button key={cta.key} variant={cta.variant} size="sm" asChild>
-							<Link href={cta.href}>{cta.label}</Link>
-						</Button>
-					))}
-				</div>
+					<div className="hidden items-center gap-2 md:flex">
+						{desktopCtas.map((cta) => (
+							<Button key={cta.key} variant={cta.variant} size="sm" className={cta.className} asChild>
+								<Link href={cta.href}>{cta.label}</Link>
+							</Button>
+						))}
+					</div>
 
 				<button
 					type="button"
@@ -173,9 +198,16 @@ export function SiteHeaderClient({ isAdmin, isAuthenticated }: SiteHeaderClientP
 						) : null}
 					</nav>
 
-					<div className="flex flex-col gap-3 border-t border-[var(--border)] px-6 py-6">
-						{mobileCtas.map((cta) => (
-							<Button key={cta.key} size="lg" variant={cta.variant} asChild onClick={closeMobileNav}>
+						<div className="flex flex-col gap-3 border-t border-[var(--border)] px-6 py-6">
+							{mobileCtas.map((cta) => (
+								<Button
+									key={cta.key}
+									size="lg"
+									variant={cta.variant}
+									className={cta.className}
+									asChild
+									onClick={closeMobileNav}
+								>
 								<Link href={cta.href}>
 									{cta.label}
 									{cta.key === "admissions" ? <ArrowRight className="ml-2 size-4" /> : null}
